@@ -21,7 +21,7 @@ namespace fileExplorer
                 string _count = String.Format(count + ")        ").Substring(0, 6);
                 string name = String.Format("| " + item.Split('\\').Last() + p.space).Substring(0, 94) + '|';
                 p.write(p.br + "| ", p.wht);
-                p.write(_count, p.grn);
+                p.write(_count, p.drkcyan);
                 p.write(name, p.wht);
                 count += 1;
             }
@@ -32,15 +32,15 @@ namespace fileExplorer
             if (currentPage == pages.Count() - 1) { nextPage = currentPage; }
             else { nextPage = currentPage + 1; }
             p.pagedBottomBar(currentPage, prevPage, nextPage);
-            p.write(p.br + "Left arrow ", p.grn);
+            p.write(p.br + "Left arrow ", p.drkcyan);
             p.write("for previous page, ", p.wht);
-            p.write("Right arrow ", p.grn);
+            p.write("Right arrow ", p.drkcyan);
             p.write("for next page, ", p.wht);
-            p.write(p.br + "P ", p.grn);
+            p.write(p.br + "P ", p.drkcyan);
             p.write("for previous directory. ", p.wht);
-            p.write("X ", p.grn);
+            p.write("X ", p.drkcyan);
             p.write("to Exit Explorer. ", p.wht);
-            ConsoleKeyInfo key = p.rk("Or, select by index number: ", p.wht, p.grn);
+            ConsoleKeyInfo key = p.rk("Or, select by index number: ", p.wht, p.drkcyan);
             if (key.Key == ConsoleKey.LeftArrow) { if (currentPage == 0) { return displayPages(pages, 0); } else { return displayPages(pages, currentPage - 1); } }
             else if (key.Key == ConsoleKey.RightArrow) { if (currentPage == pages.Count() - 1) { return displayPages(pages, currentPage); } else { return displayPages(pages, currentPage + 1); } }
             else
@@ -53,7 +53,7 @@ namespace fileExplorer
                     {
                         return pages[currentPage].dataList[_itemSelect];
                     }
-                    else { p.write(p.br + _itemSelect + " is not a valid selection.", p.wht); return displayPages(pages, currentPage); }
+                    else { p.write(p.br + _itemSelect + " is not a valid selection.", p.wht); Thread.Sleep(2500); return displayPages(pages, currentPage); }
                 }
                 else
                 {
@@ -100,14 +100,12 @@ namespace fileExplorer
         public List<string> getFolderPack(string directory)
         {
             List<string> directoryPaths = new List<string>();
-            //string[] directoriesRAW =  Directory.GetDirectories(directory);
-            //directoriesRAW = directoriesRAW.OrderBy(x => x.Split('\\').Last()).ToArray();
             DirectoryInfo thisDirec = new DirectoryInfo(directory);
             DirectoryInfo[] direcPack = { };
             FileInfo[] filePack = { };
             try
             {
-                direcPack = thisDirec.GetDirectories();
+                direcPack = thisDirec.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden)).ToArray();
             }
             catch
             {

@@ -12,12 +12,13 @@ namespace fileExplorer
     {
         /// GLOBAL VARS
         public string basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        public string basePathD = @"D:\";
         printUtil p = new printUtil();
         explore e = new explore();
 
         public void menu()
         {
-            loopThis(basePath);
+            loopThis(basePathD);
         }
         public void loopThis(string path)
         {
@@ -47,10 +48,7 @@ namespace fileExplorer
             {
                 string[] previousDirectoryRAW = directory.Split('\\');
                 string previousDirectory = "";
-                for(int i = 0;i < previousDirectoryRAW.Count() - 1; i++)
-                {
-                    previousDirectory += previousDirectoryRAW[i] + @"\";
-                }
+                for(int i = 0;i < previousDirectoryRAW.Count() - 1; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; }
                 directory = previousDirectory;
                 p.write(p.br + "This directory does not contain anything or you do not have access to it.", p.red);
                 p.rest(2000);

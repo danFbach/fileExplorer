@@ -162,20 +162,20 @@ namespace fileExplorer
         {
             write(string.Format("\n\r | Current Directory: {0} __________________________________________________________________________________", directory).Substring(0, 105) + "|", wht);
             write("\n\r _______________________________________________________________________________________________________\n\r | ", wht);
-            write("Index ", grn);
+            write("Index ", cyan);
             write("|", wht);
-            write(" Directory / File Name ", grn);
+            write(" Directory / File Name ", cyan);
             write("                                                                      |", wht);
         }
         public void bottomBar() { write("\n\r|______________________________________________________________________________________________________|\n\r", wht); }
         public void pagedBottomBar(int curPage, int prevPage, int nextPage)
         {
             write("\n\r |_[", wht);
-            write(prevPage.ToString(), grn);
+            write(prevPage.ToString(), cyan);
             write("]_____________________________________________[", wht);
-            write(curPage.ToString(), grn);
+            write(curPage.ToString(), cyan);
             write("]_____________________________________________[", wht);
-            write(nextPage.ToString(), grn);
+            write(nextPage.ToString(), cyan);
             write("]_|\n\r", wht);
         }
     }
