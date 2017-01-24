@@ -182,9 +182,12 @@ namespace fileExplorer
                     }
                 }
             }
-            drives.Add("C:\\Users\\Dan DCC\\");
-            p.write(p.br + count + ") ", p.grn);
-            p.write(drives[count], p.wht);
+            if(Directory.Exists("C:\\Users\\Dan DCC\\"))
+            {
+                drives.Add("C:\\Users\\Dan DCC\\");
+                p.write(p.br + count + ") ", p.grn);
+                p.write(drives[count], p.wht);
+            }
             p.write(p.br + "X)", p.grn);
             p.write(" Exit Application.", p.wht);
             ConsoleKeyInfo key = p.rk(p.br + p.br + "Select Index: ", p.wht, p.cyan);
