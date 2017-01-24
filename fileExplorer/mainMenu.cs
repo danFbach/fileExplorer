@@ -1,19 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace fileExplorer
 {
     public class mainMenu
     {
-        /// GLOBAL VARS
+        #region globalVars
         printUtil p = new printUtil();
         explore e = new explore();
+        #endregion
 
+        #region setupFuncs
         public void menu()
         {
             loopThis(e.getDrive());
@@ -25,6 +25,8 @@ namespace fileExplorer
             FileInfo newFile = new FileInfo(path);
             if (newFile.Exists == true)
             {
+                p.write(p.br + "Now opening " + newFile.Name + ".", p.grn);
+                p.rest(2500);
                 Process.Start(newFile.FullName);
                 menu();
             }
@@ -53,5 +55,6 @@ namespace fileExplorer
             }
             return directory;
         }
+        #endregion setupFuncs
     }
 }

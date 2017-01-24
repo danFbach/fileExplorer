@@ -1,18 +1,19 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Linq;
 using System.Threading;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace fileExplorer
 {
     public class explore
     {
+        #region generalVars
         printUtil p = new printUtil();
         public List<string> drives = new List<string>();
+        #endregion generalVars
 
+        #region page Creation and Formatting
         public string displayPages(List<pagedData> pages, int currentPage)
         {
             int count = 0;
@@ -58,7 +59,7 @@ namespace fileExplorer
                     {
                         return pages[currentPage].dataList[_itemSelect];
                     }
-                    else { p.write(p.br + _itemSelect + " is not a valid selection.", p.wht); Thread.Sleep(2500); return displayPages(pages, currentPage); }
+                    else { p.write(p.br + _itemSelect + " is not a valid selection.", p.red); Thread.Sleep(1500); return displayPages(pages, currentPage); }
                 }
                 else
                 {
@@ -78,7 +79,8 @@ namespace fileExplorer
                         }
                     }
                     if (key.KeyChar == 'x' || key.KeyChar == 'X') { return null; }
-                    p.write(p.br + _itemSelect + " is not a valid selection.", p.wht);
+                    p.write(p.br + "\"" + key.KeyChar + "\" is not a valid selection.", p.red);
+                    p.rest(1500);
                     return displayPages(pages, currentPage);
                 }
             }
@@ -107,6 +109,9 @@ namespace fileExplorer
             }
             return dataPages;
         }
+        #endregion page Creation and Formatting
+
+        #region get data
         public List<string> getFolderPack(string directory)
         {
             List<string> directoryPaths = new List<string>();
@@ -162,6 +167,7 @@ namespace fileExplorer
         {
             int count = 0;
             DriveInfo[] allDrives = DriveInfo.GetDrives();
+            p.resetConsole(0);
             p.write(p.br + "Please select the drive you would like to use." + p.br, p.wht);
             foreach (DriveInfo drive in allDrives)
             {
@@ -179,6 +185,8 @@ namespace fileExplorer
             drives.Add("C:\\Users\\Dan DCC\\");
             p.write(p.br + count + ") ", p.grn);
             p.write(drives[count], p.wht);
+            p.write(p.br + "X)", p.grn);
+            p.write(" Exit Application.", p.wht);
             ConsoleKeyInfo key = p.rk(p.br + p.br + "Select Index: ", p.wht, p.cyan);
             int selDrive;
             bool result = int.TryParse(key.KeyChar.ToString(), out selDrive);
@@ -197,10 +205,15 @@ namespace fileExplorer
             }
             else
             {
-                p.write("\"" + key.KeyChar + "\" is not a valid selection.", p.red);
+                if(key.KeyChar == 'x' || key.KeyChar == 'X')
+                {
+                    Environment.Exit(0);
+                }
+                p.write(p.br + "\"" + key.KeyChar + "\" is not a valid selection.", p.red);
                 p.resetConsole(1500);
                 return getDrive();
             }
         }
+        #endregion get data
     }
 }

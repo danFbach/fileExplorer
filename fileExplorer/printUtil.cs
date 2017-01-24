@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace fileExplorer
 {
     public class printUtil
     {
+        #region globalVars
+
         public string blue = "blue";
         public string drkblue = "darkblue";
         public string cyan = "cyan";
@@ -25,10 +24,11 @@ namespace fileExplorer
         public string wht = "white";
         public string blk = "black";
         public string space = @"                                                                                                    ";
-
-        /// LINE FORMATTING
         public string br = "\n\r ";
-        
+
+        #endregion globalVars
+
+        #region printTools
         public void rest(int rest)
         {
             Thread.Sleep(rest);
@@ -42,6 +42,10 @@ namespace fileExplorer
         {
             Console.ReadKey();
         }
+
+        #endregion printTools
+
+        #region printing
         public void write(string _input, string color)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
@@ -158,6 +162,10 @@ namespace fileExplorer
                     break;
             }
         }
+
+        #endregion printing
+
+        #region printFormatting
         public void topBar(string title) { write(string.Format("\n\r______________________________________________{0}_____________________________________________\n\r| Index | Name                                                                       | Length         |", title), wht); }
         public void topBarBlank(string directory)
         {
@@ -192,5 +200,6 @@ namespace fileExplorer
             write(nextPage.ToString(), cyan);
             write("]_|\n\r", wht);
         }
+        #endregion printFormatting
     }
 }
