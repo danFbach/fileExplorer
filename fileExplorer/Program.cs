@@ -11,6 +11,8 @@ namespace fileExplorer
         static void Main(string[] args)
         {
             Console.SetWindowSize(105, Console.WindowHeight);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.Clear();
             mainMenu run = new mainMenu();
             run.menu();
         }

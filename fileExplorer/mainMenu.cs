@@ -11,14 +11,12 @@ namespace fileExplorer
     public class mainMenu
     {
         /// GLOBAL VARS
-        public string basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        public string basePathD = @"D:\";
         printUtil p = new printUtil();
         explore e = new explore();
 
         public void menu()
         {
-            loopThis(basePathD);
+            loopThis(e.getDrive());
         }
         public void loopThis(string path)
         {

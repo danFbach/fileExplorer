@@ -28,19 +28,24 @@ namespace fileExplorer
 
         /// LINE FORMATTING
         public string br = "\n\r ";
-
-        public void rest(int time)
+        
+        public void rest(int rest)
         {
-            Thread.Sleep(time);
+            Thread.Sleep(rest);
         }
-        public void resetConsole()
+        public void resetConsole(int rest)
         {
+            Thread.Sleep(rest);
             Console.Clear();
+        }
+        public void proceed()
+        {
+            Console.ReadKey();
         }
         public void write(string _input, string color)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            Console.BackgroundColor = ConsoleColor.Black;
+            //Console.BackgroundColor = ConsoleColor.Black;
             if (color != null)
             {
                 color = color.ToLower();
@@ -52,7 +57,7 @@ namespace fileExplorer
         public string rl(string _input, string colorOUT, string colorIN)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            Console.BackgroundColor = ConsoleColor.Black;
+            //Console.BackgroundColor = ConsoleColor.Black;
             string returnData;
             if (colorOUT != null)
             {
@@ -71,7 +76,7 @@ namespace fileExplorer
         public ConsoleKeyInfo rk(string _input, string colorOUT, string colorIN)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            Console.BackgroundColor = ConsoleColor.Black;
+            //Console.BackgroundColor = ConsoleColor.Black;
             ConsoleKeyInfo returnData;
             if (colorOUT != null)
             {
@@ -127,6 +132,7 @@ namespace fileExplorer
                     break;
                 case "darkgray":
                     Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.BackgroundColor = ConsoleColor.White;
                     break;
                 case "darkgreen":
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -145,7 +151,6 @@ namespace fileExplorer
                     break;
                 case "black":
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.White;
                     break;
                 ///DEFAULT COLOR
                 default:
@@ -153,16 +158,25 @@ namespace fileExplorer
                     break;
             }
         }
-        public void proceed()
-        {
-            Console.ReadKey();
-        }
         public void topBar(string title) { write(string.Format("\n\r______________________________________________{0}_____________________________________________\n\r| Index | Name                                                                       | Length         |", title), wht); }
         public void topBarBlank(string directory)
         {
-            write(string.Format("\n\r | Current Directory: {0} __________________________________________________________________________________", directory).Substring(0, 105) + "|", wht);
-            write("\n\r _______________________________________________________________________________________________________\n\r | ", wht);
-            write("Index ", cyan);
+            if(directory.Length <= 81)
+            {
+                write(string.Format("\n\r | Current Directory: {0} __________________________________________________________________________________", directory).Substring(0, 105) + "|", wht);
+            }
+            else
+            {
+                write(string.Format("\n\r | Current Directory: {0} __________________________________________________________________________________", directory).Substring(0, 105) + "|", wht);
+                int dirLength = directory.Length / 81;
+                int subString = 81;
+                for(int i = 0;i < dirLength; i++)
+                {
+                    write(string.Format("\n\r | {0}_________________________________________________________________________________________________________", directory.Substring(subString)).Substring(0, 105) + "|", wht);
+                    subString += 81;
+                }
+            }
+            write("\n\r _______________________________________________________________________________________________________\n\r | ", wht);           write("Index ", cyan);
             write("|", wht);
             write(" Directory / File Name ", cyan);
             write("                                                                      |", wht);
