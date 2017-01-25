@@ -16,27 +16,27 @@ namespace fileExplorer
         #region page Creation and Formatting
         public string displayPages(List<pagedData> pages, int currentPage)
         {
-            int count = 0;
+            int count = 1;
             string currentDirectory = getCurrentDirec(pages);
             int pCheck = currentDirectory.Split('\\').Count();
             p.resetConsole(0);
             p.topBarBlank(currentDirectory);
             foreach (string item in pages[currentPage].dataList)
             {
-                string _count = String.Format(count + ")        ").Substring(0, 6);
-                string name = String.Format("| " + item.Split('\\').Last() + p.space).Substring(0, 94) + '|';
+                if (count == 10)
+                {
+                    count = 0;
+                }
+                string _count = count + ")--- ";
+                string name = String.Format(item.Split('\\').Last() + p.space).Substring(0, 90) + '|';
                 p.write(p.br + "| ", p.wht);
                 p.write(_count, p.grn);
+                p.write("|", p.wht);
+                p.write(" - ", p.grn);
                 p.write(name, p.wht);
                 count += 1;
             }
-            int prevPage = 0;
-            int nextPage = 0;
-            if (currentPage == 0) { prevPage = 0; }
-            else { prevPage = currentPage - 1; }
-            if (currentPage == pages.Count() - 1) { nextPage = currentPage; }
-            else { nextPage = currentPage + 1; }
-            p.pagedBottomBar(currentPage, prevPage, nextPage);
+            p.pagedBottomBar(currentPage);
             p.write(p.br + "Left arrow ", p.grn);
             p.write("for previous page, ", p.wht);
             p.write("Right arrow ", p.grn);
@@ -46,42 +46,19 @@ namespace fileExplorer
             p.write("X ", p.grn);
             p.write("to Exit Explorer. ", p.wht);
             p.write(p.br + "Or, select an item by its ", p.wht);
-            ConsoleKeyInfo key = p.rk("index number: ", p.grn, p.cyan);
-            if (key.Key == ConsoleKey.LeftArrow) { if (currentPage == 0) { return displayPages(pages, 0); } else { return displayPages(pages, currentPage - 1); } }
-            else if (key.Key == ConsoleKey.RightArrow) { if (currentPage == pages.Count() - 1) { return displayPages(pages, currentPage); } else { return displayPages(pages, currentPage + 1); } }
+            ConsoleKeyInfo thisKey = p.rk("index number: ", p.grn, p.cyan);
+            if (thisKey.Key == ConsoleKey.LeftArrow) { if (currentPage == 0) { return displayPages(pages, 0); } else { return displayPages(pages, currentPage - 1); } }
+            else if (thisKey.Key == ConsoleKey.RightArrow) { if (currentPage == pages.Count() - 1) { return displayPages(pages, currentPage); } else { return displayPages(pages, currentPage + 1); } }
             else
             {
-                int _itemSelect;
-                bool isANumber = int.TryParse(key.KeyChar.ToString(), out _itemSelect);
-                if (isANumber)
-                {
-                    if (_itemSelect >= 0 && _itemSelect <= pages[currentPage].dataList.Count() - 1)
-                    {
-                        return pages[currentPage].dataList[_itemSelect];
-                    }
-                    else { p.write(p.br + _itemSelect + " is not a valid selection.", p.red); Thread.Sleep(1500); return displayPages(pages, currentPage); }
-                }
+                int dataChoice;
+                bool isNumber = int.TryParse(thisKey.KeyChar.ToString(), out dataChoice);
+                if (isNumber) { if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { if (dataChoice == 0) { dataChoice = 10; } return pages[currentPage].dataList[dataChoice - 1]; } else { p.write(p.br + dataChoice + " is not a valid selection.", p.red); Thread.Sleep(1500); return displayPages(pages, currentPage); } }
                 else
                 {
-                    if (key.KeyChar == 'p' || key.KeyChar == 'P')
-                    {
-                        if (pCheck > 2)
-                        {
-                            string[] previousDirectoryRAW = pages[currentPage].dataList[0].Split('\\');
-                            string previousDirectory = "";
-                            for (int i = 0; i < previousDirectoryRAW.Count() - 2; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; }
-                            return previousDirectory;
-                        }
-                        else
-                        {
-                            p.resetConsole(0);
-                            return getDrive();
-                        }
-                    }
-                    if (key.KeyChar == 'x' || key.KeyChar == 'X') { return null; }
-                    p.write(p.br + "\"" + key.KeyChar + "\" is not a valid selection.", p.red);
-                    p.rest(1500);
-                    return displayPages(pages, currentPage);
+                    if (thisKey.KeyChar == 'p' || thisKey.KeyChar == 'P') { if (pCheck > 2) { string[] previousDirectoryRAW = pages[currentPage].dataList[0].Split('\\'); string previousDirectory = ""; for (int i = 0; i < previousDirectoryRAW.Count() - 2; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; } return previousDirectory; } else { p.resetConsole(0); return getDrive(); } }
+                    else if (thisKey.KeyChar == 'x' || thisKey.KeyChar == 'X') { return null; }
+                    else { p.write(p.br + "\"" + thisKey.KeyChar + "\" is not a valid selection.", p.red); p.rest(1500); return displayPages(pages, currentPage); }
                 }
             }
         }
@@ -118,22 +95,10 @@ namespace fileExplorer
             DirectoryInfo thisDirec = new DirectoryInfo(directory);
             DirectoryInfo[] direcPack = { };
             FileInfo[] filePack = { };
-            try
-            {
-                direcPack = thisDirec.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden)).ToArray();
-            }
-            catch
-            {
-
-            }
-            try
-            {
-                filePack = thisDirec.GetFiles();
-            }
-            catch
-            {
-
-            }
+            try { direcPack = thisDirec.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden)).ToArray(); }
+            catch { }
+            try { filePack = thisDirec.GetFiles(); }
+            catch { }
             if (direcPack.Count() > 0)
             {
                 foreach (var path in direcPack)
@@ -182,7 +147,7 @@ namespace fileExplorer
                     }
                 }
             }
-            if(Directory.Exists("C:\\Users\\Dan DCC\\"))
+            if (Directory.Exists("C:\\Users\\Dan DCC\\"))
             {
                 drives.Add("C:\\Users\\Dan DCC\\");
                 p.write(p.br + count + ") ", p.grn);
@@ -195,7 +160,7 @@ namespace fileExplorer
             bool result = int.TryParse(key.KeyChar.ToString(), out selDrive);
             if (result)
             {
-                if (selDrive < allDrives.Count() && selDrive >= 0)
+                if (selDrive < drives.Count() && selDrive >= 0)
                 {
                     return drives[selDrive];
                 }
@@ -208,7 +173,7 @@ namespace fileExplorer
             }
             else
             {
-                if(key.KeyChar == 'x' || key.KeyChar == 'X')
+                if (key.KeyChar == 'x' || key.KeyChar == 'X')
                 {
                     Environment.Exit(0);
                 }

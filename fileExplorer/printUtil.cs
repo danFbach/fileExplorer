@@ -169,36 +169,36 @@ namespace fileExplorer
         public void topBar(string title) { write(string.Format("\n\r______________________________________________{0}_____________________________________________\n\r| Index | Name                                                                       | Length         |", title), wht); }
         public void topBarBlank(string directory)
         {
-            if(directory.Length <= 81)
+            write(br + " _____________________________________________________________________________________________________ ", wht);
+            write(br + "|                                                                                                     |\n\r", wht);
+            if (directory.Length <= 81)
             {
-                write(string.Format("\n\r | Current Directory: {0} __________________________________________________________________________________", directory).Substring(0, 105) + "|", wht);
+                write(string.Format(" | Current Directory: {0} " + space, directory).Substring(0, 103) + "|", wht);
             }
             else
             {
-                write(string.Format("\n\r | Current Directory: {0} __________________________________________________________________________________", directory).Substring(0, 105) + "|", wht);
-                int dirLength = directory.Length / 81;
-                int subString = 81;
+                write(string.Format(" | Current Directory: {0} " + space, directory).Substring(0, 102) + " |", wht);
+                int dirLength = ((directory.Length - 80) / 100) + 1;
+                int subString = 80;
                 for(int i = 0;i < dirLength; i++)
                 {
-                    write(string.Format("\n\r | {0}_________________________________________________________________________________________________________", directory.Substring(subString)).Substring(0, 105) + "|", wht);
-                    subString += 81;
+                    write(string.Format("\n\r | {0}" + space, directory.Substring(subString)).Substring(0, 104) + " |", wht);
+                    subString += 99;
                 }
             }
-            write("\n\r _______________________________________________________________________________________________________\n\r | ", wht);           write("Index ", cyan);
+            write("\n\r |_____________________________________________________________________________________________________|\n\r |", wht);
+            write(" Index ", cyan);
             write("|", wht);
             write(" Directory / File Name ", cyan);
             write("                                                                      |", wht);
         }
+        public void emptyNoSides() { write("\n\r  _____________________________________________________________________________________________________  ", wht); }
         public void bottomBar() { write("\n\r|______________________________________________________________________________________________________|\n\r", wht); }
-        public void pagedBottomBar(int curPage, int prevPage, int nextPage)
+        public void pagedBottomBar(int curPage)
         {
-            write("\n\r |_[", wht);
-            write(prevPage.ToString(), cyan);
-            write("]_____________________________________________[", wht);
+            write(br + "|____________________________________________Page [", wht);
             write(curPage.ToString(), cyan);
-            write("]_____________________________________________[", wht);
-            write(nextPage.ToString(), cyan);
-            write("]_|\n\r", wht);
+            write("]_________________________________________________|", wht);
         }
         #endregion printFormatting
     }
