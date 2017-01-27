@@ -194,11 +194,11 @@ namespace fileExplorer
         }
         public void emptyNoSides() { write("\n\r  _____________________________________________________________________________________________________  ", wht); }
         public void bottomBar() { write("\n\r|______________________________________________________________________________________________________|\n\r", wht); }
-        public void pagedBottomBar(int curPage)
+        public void pagedBottomBar(int curPage, int lastPage)
         {
             write(br + "|____________________________________________Page [", wht);
             write(curPage.ToString(), cyan);
-            write("]_________________________________________________|", wht);
+            write(String.Format(("]__________________________________Last Page [{0}]___").Substring(0, 52) + "|", lastPage), wht);
         }
         #endregion printFormatting
     }

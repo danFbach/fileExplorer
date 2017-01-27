@@ -20,10 +20,17 @@ namespace fileExplorer
         }
         public void loopThis(string path)
         {
+            if (path == "OpenFolder")
+            {
+                menu();
+            }
             path = getPath(path);
-            if (path == null) { Environment.Exit(0); }
+            if (path == "OpenFolder")
+            {
+                menu();
+            }
             FileInfo newFile = new FileInfo(path);
-            if (newFile.Exists == true)
+            if (newFile.Exists)
             {
                 p.write(p.br + "Now opening " + newFile.Name + ".", p.grn);
                 p.rest(2500);
@@ -42,7 +49,7 @@ namespace fileExplorer
             List<pagedData> pages = e.createPages(pathPack);
             if(pages.Count() > 0)
             {
-                directory = e.displayPages(pages, 0);
+                directory = e.displayPages(pages, 0, false, false);
             }
             else
             {
