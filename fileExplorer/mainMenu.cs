@@ -49,7 +49,7 @@ namespace fileExplorer
             List<pagedData> pages = e.createPages(pathPack);
             if(pages.Count() > 0)
             {
-                directory = e.displayPages(pages, 0, false, false);
+                directory = e.displayPages(pages, 0, false, false, 1);
             }
             else
             {
