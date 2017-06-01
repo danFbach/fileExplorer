@@ -20,10 +20,11 @@ namespace fileExplorer
         public string red = "red";
         public string drkRed = "darkred";
         public string ylw = "yellow";
-        public string drkYlw = "darkyellow";
+        public string gold = "darkyellow";
         public string wht = "white";
         public string blk = "black";
-        public string space = @"                                                                                                    ";
+        public string bar = "_____________________________________________________________________________________________________";
+        public string space = @"                                                                                                                                                                                                        ";
         public string br = "\n\r ";
 
         #endregion globalVars
@@ -38,10 +39,7 @@ namespace fileExplorer
             Thread.Sleep(rest);
             Console.Clear();
         }
-        public void proceed()
-        {
-            Console.ReadKey();
-        }
+        public void pause() { write("Press any Key to Continue.", red); Console.ReadKey(); }
 
         #endregion printTools
 
@@ -49,7 +47,7 @@ namespace fileExplorer
         public void write(string _input, string color)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            //Console.BackgroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Black;
             if (color != null)
             {
                 color = color.ToLower();
@@ -57,43 +55,18 @@ namespace fileExplorer
             pickColor(color);
             Console.Write(_input);
         }
-
-        public string rl(string _input, string colorOUT, string colorIN)
-        {
-            ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            //Console.BackgroundColor = ConsoleColor.Black;
-            string returnData;
-            if (colorOUT != null)
-            {
-                colorIN = colorIN.ToLower();
-            }
-            pickColor(colorOUT);
-            Console.Write(_input);
-            if (colorIN != null)
-            {
-                colorIN = colorIN.ToLower();
-            }
-            pickColor(colorIN);
-            returnData = Console.ReadLine();
-            return returnData;
-        }
+        
         public ConsoleKeyInfo rk(string _input, string colorOUT, string colorIN)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            //Console.BackgroundColor = ConsoleColor.Black;
+ 
             ConsoleKeyInfo returnData;
-            if (colorOUT != null)
-            {
-                colorIN = colorIN.ToLower();
-            }
+            if (colorOUT != null) { colorIN = colorIN.ToLower(); }
             pickColor(colorOUT);
             Console.Write(_input);
-            if (colorIN != null)
-            {
-                colorIN = colorIN.ToLower();
-            }
+            if (colorIN != null) { colorIN = colorIN.ToLower(); }
             pickColor(colorIN);
-            returnData = Console.ReadKey();
+            returnData = Console.ReadKey(true);
             if (returnData.Key == ConsoleKey.LeftArrow || returnData.Key == ConsoleKey.RightArrow) { return returnData; }
             else
             {
@@ -101,11 +74,13 @@ namespace fileExplorer
                 return returnData;
             }
         }
+
+        /// Color Picker
         public void pickColor(string color)
         {
             switch (color)
             {
-                ///NORMAL COLORS
+                /// NORMAL COLORS
                 case "blue":
                     Console.ForegroundColor = ConsoleColor.Blue;
                     break;
@@ -127,7 +102,7 @@ namespace fileExplorer
                 case "yellow":
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
-                ///DARK COLORS
+                /// DARK COLORS
                 case "darkblue":
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
                     break;
@@ -136,7 +111,6 @@ namespace fileExplorer
                     break;
                 case "darkgray":
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.BackgroundColor = ConsoleColor.White;
                     break;
                 case "darkgreen":
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -155,8 +129,8 @@ namespace fileExplorer
                     break;
                 case "black":
                     Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
                     break;
-                ///DEFAULT COLOR
                 default:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
@@ -166,39 +140,53 @@ namespace fileExplorer
         #endregion printing
 
         #region printFormatting
-        public void topBar(string title) { write(string.Format("\n\r______________________________________________{0}_____________________________________________\n\r| Index | Name                                                                       | Length         |", title), wht); }
-        public void topBarBlank(string directory)
+
+        public void topBarWithCurDir(string directory)
         {
-            write(br + " _____________________________________________________________________________________________________ ", wht);
-            write(br + "|                                                                                                     |\n\r", wht);
+            write((space).Substring(0,  83).Insert(83, "| fileExplorer v0.1 |") + br, drkGray);
+            write( " " + bar + " " + br, blue);
+            write("|                                                                                                     |\n\r", blue);
+            write(" | ", blue);
+            write("Current Directory: ", null);
             if (directory.Length <= 81)
             {
-                write(string.Format(" | Current Directory: {0} " + space, directory).Substring(0, 103) + "|", wht);
+                write(string.Format("{0} " + space, directory).Substring(0, 81) , wht);
+                write("|", blue);
             }
             else
             {
-                write(string.Format(" | Current Directory: {0} " + space, directory).Substring(0, 102) + " |", wht);
+                write(string.Format("{0}" + space, directory).Substring(0, 80) + " ", wht);
+                write("|", blue);
                 int dirLength = ((directory.Length - 80) / 100) + 1;
                 int subString = 80;
                 for(int i = 0;i < dirLength; i++)
                 {
-                    write(string.Format("\n\r | {0}" + space, directory.Substring(subString)).Substring(0, 104) + " |", wht);
+                    write(br + "| ", blue);
+                    write(string.Format("{0}" + space, directory.Substring(subString)).Substring(0, 100) , wht);
+                    write("|", blue);
                     subString += 99;
                 }
             }
-            write("\n\r |_____________________________________________________________________________________________________|\n\r |", wht);
-            write(" Index ", cyan);
-            write("|", wht);
-            write(" Directory / File Name ", cyan);
-            write("                                                                      |", wht);
+            write(br + "|" + bar + "|" + br + "|", blue);
+            write(" Index", wht);
+            write("--|--", drkGray);
+            write(" Directory / File Name ", wht);
+            write("                                                                   |", blue);
         }
-        public void emptyNoSides() { write("\n\r  _____________________________________________________________________________________________________  ", wht); }
-        public void bottomBar() { write("\n\r|______________________________________________________________________________________________________|\n\r", wht); }
+
         public void pagedBottomBar(int curPage, int lastPage)
         {
-            write(br + "|____________________________________________Page [", wht);
-            write(curPage.ToString(), cyan);
-            write(String.Format(("]__________________________________Last Page [{0}]___").Substring(0, 52) + "|", lastPage), wht);
+            int lastPgStrClip = 5 - (lastPage.ToString().Length - 1);
+            int curPgStrClip = 71 - (curPage.ToString().Length + lastPage.ToString().Length);
+            write(br + "|_ ", blue);
+            write("Current Page ", drkGray);
+            write("[", blue);
+            write(curPage.ToString(), grn);
+            write(("]" + bar).Substring(0, curPgStrClip), blue);
+            write(" Last Page ", drkGray);
+            write("[", blue);
+            write(lastPage.ToString(), wht);
+            write("]_" + "|", blue);
         }
         #endregion printFormatting
     }
