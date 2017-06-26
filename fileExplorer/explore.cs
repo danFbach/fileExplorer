@@ -34,7 +34,7 @@ namespace fileExplorer
                 itemName = item;
                 if (!drives && nameData.Count() <= 1) { itemName = (itemName + p.space).Substring(0, 89); }
                 else if (!drives && nameData.Count() > 1) { itemName = (itemName.Split('\\').Last() + p.space).Substring(0, 89); }
-                else { itemName =(itemName + p.space).Substring(0, 89); }
+                else { itemName = (itemName + p.space).Substring(0, 89); }
                 if (count == curRow && goToExplorer == false)
                 {
                     //CURRENT LIST ITEM
@@ -88,7 +88,7 @@ namespace fileExplorer
             p.write(p.br + "OR", p.drkGray);
             p.write(" Select an item by its ", p.wht);
             ConsoleKeyInfo k = p.rk("index number: ", p.drkGray, p.gray);
-            p.write(" ▓ Loading ▓ " , p.ylw);
+            p.write(" ▓ Loading ▓ ", p.ylw);
             if (goToExplorer == false)
             {
                 if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow) { return displayPages(pages, leftRight(currentPage, k, pages), drives, goToExplorer, 1); }
@@ -106,7 +106,7 @@ namespace fileExplorer
                     bool isNumber = int.TryParse(k.KeyChar.ToString(), out dataChoice);
                     if (isNumber)
                     {
-                        if(dataChoice == 0) { dataChoice = 10; }
+                        if (dataChoice == 0) { dataChoice = 10; }
                         if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
                         else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); Thread.Sleep(850); return displayPages(pages, 0, drives, goToExplorer, curRow); }
                     }
@@ -126,7 +126,7 @@ namespace fileExplorer
                                 {
                                     p.write("Error.", p.red);
                                     return currentDirectory;
-                                }                                
+                                }
                             case ConsoleKey.H:
                                 return null;
 
@@ -274,6 +274,13 @@ namespace fileExplorer
             List<pagedData> pages = createPages(drives);
             return displayPages(pages, 0, true, false, 1);
         }
+
+        //public void getSubDirs(string parentDir)
+        //{
+        //    List<string> dirWithContent = new List<string>();
+        //    try { direcPackRAW = thisDirec.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden)).ToArray(); }
+        //    catch { }x``xxc
+        //}
         #endregion get data
 
         #region utils

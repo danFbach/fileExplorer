@@ -43,23 +43,12 @@ namespace fileExplorer
 
         #endregion printTools
 
-        #region printing
-        public void write(string _input, string color)
-        {
-            ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
-            Console.BackgroundColor = ConsoleColor.Black;
-            if (color != null)
-            {
-                color = color.ToLower();
-            }
-            pickColor(color);
-            Console.Write(_input);
-        }
-        
+        #region Reading
+
         public ConsoleKeyInfo rk(string _input, string colorOUT, string colorIN)
         {
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
- 
+
             ConsoleKeyInfo returnData;
             if (colorOUT != null) { colorIN = colorIN.ToLower(); }
             pickColor(colorOUT);
@@ -74,6 +63,22 @@ namespace fileExplorer
                 return returnData;
             }
         }
+
+        #endregion Reading
+
+        #region printing
+        public void write(string _input, string color)
+        {
+            ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
+            Console.BackgroundColor = ConsoleColor.Black;
+            if (color != null)
+            {
+                color = color.ToLower();
+            }
+            pickColor(color);
+            Console.Write(_input);
+        }
+        
 
         /// Color Picker
         public void pickColor(string color)

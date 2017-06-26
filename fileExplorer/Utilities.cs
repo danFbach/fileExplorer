@@ -8,9 +8,12 @@ namespace fileExplorer
 {
     class Utilities
     {
+        #region Variables
         printUtil p = new printUtil();
         explore e = new explore();
+        #endregion Variables
 
+        #region pathFileRetrieval
         public string getPath(string directory)
         {
             List<string> pathPack = e.getFolderPack(directory);
@@ -50,5 +53,6 @@ namespace fileExplorer
             }
             else { return " "; }
         }
+        #endregion pathFileRetrieval
     }
 }

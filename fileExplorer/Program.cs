@@ -6,8 +6,8 @@ namespace fileExplorer
     {
         static void Main(string[] args)
         {
-            Console.SetWindowSize(105, 27);
-            Console.BufferHeight = 27;
+            Console.SetWindowSize(105, 28);
+            Console.BufferHeight = 28;
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Title = "File Explorer.";
             Console.Clear();
