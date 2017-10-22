@@ -144,8 +144,9 @@ namespace fileExplorer
         #region printFormatting
         public void topBarWithCurDir(string directory)
         {
-            write((space).Substring(0,  83).Insert(83, "| fileExplorer " + g.version + " |") + br, drkGray);
-            write( " " + bar + " " + br, blue);
+            write(space.Substring(0, 82) + "_____________________ " + br, drkGray);
+            write( " " + bar.Substring(0, 79), blue);
+            write("| " + g.version + " |" + br, drkGray);
             write("|                                                                                                     |\n\r", blue);
             write(" | ", blue);
             write("Current Directory: ", null);

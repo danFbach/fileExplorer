@@ -63,11 +63,13 @@ namespace fileExplorer
                 p.write("select a menu item. ", p.wht);
                 p.write(p.br + "Enter - ", p.drkGray);
                 p.write("Open file or enter folder. ", p.wht);
-                p.write(p.br + "F -  ", p.drkGray);
+                p.write(p.br + "A -  ", p.drkGray);
                 p.write("Add to Favorites. ", p.wht);
+                p.write("F - ", p.drkGray);
+                p.write("View Favorites.", p.wht);
                 p.write(p.br + "P or Backspace -  ", p.drkGray);
                 p.write("Move up a directory. ", p.wht);
-                p.write(p.br + p.br + "H) ", p.drkGray);
+                p.write(p.br + "H) ", p.drkGray);
                 p.write("Return to home directory. ", p.wht);
                 p.write(p.br + "O) ", p.drkGray);
                 p.write("Open active folder or file. ", p.wht);
@@ -106,9 +108,12 @@ namespace fileExplorer
                     {
                         switch (k.Key)
                         {
-                            case ConsoleKey.F:
+                            case ConsoleKey.A:
                                 w.executeFileWriteAdd(currentDirectory);
                                 return currentDirectory;
+                            case ConsoleKey.F:
+                                pages = showFavorites();
+                                return displayPages(pages, currentPage, drives, goToExplorer, curRow);
                             case ConsoleKey.O:
                                 if (Directory.Exists(currentDirectory))
                                 {
@@ -124,7 +129,6 @@ namespace fileExplorer
                                 }
                             case ConsoleKey.H:
                                 return null;
-
                             case ConsoleKey.Backspace:
                             case ConsoleKey.P:
                                 if (pCheck > 2)
@@ -236,15 +240,24 @@ namespace fileExplorer
             return direc;
         }
 
-        public List<DirectoryInfo> getFavorites()
+        public List<pagedData> showFavorites()
         {
             List<string> favRaw = r.retrieveFavorites();
             List<DirectoryInfo> dirFavs = new List<DirectoryInfo>();
+            List<string> favorites = new List<string>();
             foreach(string f in favRaw)
             {
                 dirFavs.Add(new DirectoryInfo(f));
             }
-            return dirFavs;
+            dirFavs = dirFavs.OrderBy(x => x.FullName).ToList();
+            foreach (DirectoryInfo f in dirFavs)
+            {
+                if (Directory.Exists(f.FullName))
+                {
+                    favorites.Add(f.FullName);
+                }
+            }
+            return createPages(favorites);
         }
         public string getDrives()
         {
@@ -262,14 +275,6 @@ namespace fileExplorer
                         DirectoryInfo newDirectory = new DirectoryInfo(drive.Name);
                         drivesRAW.Add(newDirectory);
                     }
-                }
-            }
-            List<DirectoryInfo> favorites = getFavorites();
-            foreach(DirectoryInfo f in favorites)
-            {
-                if (Directory.Exists(f.FullName))
-                {
-                    drivesRAW.Add(f);
                 }
             }
             foreach (DirectoryInfo directory in myDrives)

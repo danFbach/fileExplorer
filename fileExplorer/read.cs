@@ -9,7 +9,7 @@ namespace fileExplorer
 {
     class read
     {
-        string filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\fileExplorerFavorites\favorites.txt";
+        string filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\fileExplorerFavorites\\favorites.txt";
 
         public List<string> retrieveFavorites()
         {
