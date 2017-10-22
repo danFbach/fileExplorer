@@ -6,7 +6,7 @@ namespace fileExplorer
     public class printUtil
     {
         #region globalVars
-
+        globals g = new globals();
         public string blue = "blue";
         public string drkblue = "darkblue";
         public string cyan = "cyan";
@@ -78,8 +78,6 @@ namespace fileExplorer
             pickColor(color);
             Console.Write(_input);
         }
-        
-
         /// Color Picker
         public void pickColor(string color)
         {
@@ -141,14 +139,12 @@ namespace fileExplorer
                     break;
             }
         }
-
         #endregion printing
 
         #region printFormatting
-
         public void topBarWithCurDir(string directory)
         {
-            write((space).Substring(0,  83).Insert(83, "| fileExplorer v0.1 |") + br, drkGray);
+            write((space).Substring(0,  83).Insert(83, "| fileExplorer " + g.version + " |") + br, drkGray);
             write( " " + bar + " " + br, blue);
             write("|                                                                                                     |\n\r", blue);
             write(" | ", blue);
@@ -174,9 +170,9 @@ namespace fileExplorer
             }
             write(br + "|" + bar + "|" + br + "|", blue);
             write(" Index", wht);
-            write("--|--", drkGray);
-            write(" Directory / File Name ", wht);
-            write("                                                                   |", blue);
+            write(" |  ", drkGray);
+            write(string.Format("Directory / File Name" + space).Substring(0 ,91), wht);
+            write("|", blue);
         }
 
         public void pagedBottomBar(int curPage, int lastPage)
@@ -192,6 +188,27 @@ namespace fileExplorer
             write("[", blue);
             write(lastPage.ToString(), wht);
             write("]_" + "|", blue);
+        }
+        public void currentLI(string LInumber, string LIname)
+        {
+            write(br + "|", blue);
+            write(" - " + LInumber + ") -|- " + LIname, grn);
+            write("|", blue);
+        }
+        public void genericLI(string LInumber, string LIname)
+        {
+            write(br + "|", blue);
+            write(" - ", drkGray);
+            write(LInumber + ")", wht);
+            write(" -|- ", drkGray);
+            write(LIname, wht);
+            write("|", blue);
+        }
+        public void LIfiller()
+        {
+            write(br + "| ", blue);
+            write("- X) -|- ", drkGray);
+            write(String.Format(space).Substring(0, 91) + '|', blue);
         }
         #endregion printFormatting
     }

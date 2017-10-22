@@ -45,12 +45,15 @@
   <ItemGroup>
     <Compile Include="directoryPack.cs" />
     <Compile Include="explore.cs" />
+    <Compile Include="globals.cs" />
     <Compile Include="mainMenu.cs" />
     <Compile Include="pagedData.cs" />
     <Compile Include="printUtil.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="read.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="write.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

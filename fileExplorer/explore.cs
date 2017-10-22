@@ -10,10 +10,14 @@ namespace fileExplorer
     public class explore
     {
         #region generalVars
+        write w = new write();
+        read r = new read();
         printUtil p = new printUtil();
         public List<DirectoryInfo> drivesRAW = new List<DirectoryInfo>();
-        public List<DirectoryInfo> myDrives = new List<DirectoryInfo>(new[] { new DirectoryInfo(@"Z:\Main (A)\Shared Videos"), new DirectoryInfo(@"Z:\Main (A)\Shared Documents"), new DirectoryInfo(@"Y:\Main (B)"), new DirectoryInfo(@"Y:\Main (B)\Music"), new DirectoryInfo(@"C:\Users\Dan DCC") });
+        public List<DirectoryInfo> myDrives = new List<DirectoryInfo>(new[] { new DirectoryInfo(@"Z:\Main (A)\Shared Videos"), new DirectoryInfo(@"Z:\Main (A)\Shared Documents"), new DirectoryInfo(@"X:\Main (B)"), new DirectoryInfo(@"X:\Main (B)\Music"), new DirectoryInfo(@"C:\Users\Dan DCC") });
         public List<string> drives = new List<string>();
+        public List<ConsoleKeyInfo> keystrokes = new List<ConsoleKeyInfo>();
+        bool keysMatch;
         #endregion generalVars
 
         #region page Creation and Formatting
@@ -32,35 +36,18 @@ namespace fileExplorer
                 string[] nameData = item.Split('\\');
                 string itemName = "";
                 itemName = item;
-                if (!drives && nameData.Count() <= 1) { itemName = (itemName + p.space).Substring(0, 89); }
-                else if (!drives && nameData.Count() > 1) { itemName = (itemName.Split('\\').Last() + p.space).Substring(0, 89); }
-                else { itemName = (itemName + p.space).Substring(0, 89); }
-                if (count == curRow && goToExplorer == false)
-                {
-                    //CURRENT LIST ITEM
-                    p.write(p.br + "|", p.blue);
-                    p.write(" - " + _count + ") --|-- " + itemName, p.grn);
-                    p.write("|", p.blue);
-                }
-                else
-                {
-                    //ALL OTHER LIST ITEMS
-                    p.write(p.br + "|", p.blue);
-                    p.write(" - ", p.drkGray);
-                    p.write(_count + ")", p.wht);
-                    p.write(" --|-- ", p.drkGray);
-                    p.write(itemName, p.wht);
-                    p.write("|", p.blue);
-                }
+                if (!drives && nameData.Count() <= 1) { itemName = (itemName + p.space).Substring(0, 91); }
+                else if (!drives && nameData.Count() > 1) { itemName = (itemName.Split('\\').Last() + p.space).Substring(0, 91); }
+                else { itemName = (itemName + p.space).Substring(0, 91); }
+                ///CURRENT LIST ITEM
+                if (count == curRow && goToExplorer == false) { p.currentLI(_count, itemName); }
+                ///ALL OTHER LIST ITEMS
+                else { p.genericLI(_count, itemName); }
+                ///FILLER LIST ITEMS
                 if (item == pages[currentPage].dataList.Last())
                 {
                     if (count == 0) { count = 10; }
-                    for (int i = count; i < 10; i++)
-                    {
-                        p.write(p.br + "| ", p.blue);
-                        p.write("- X) --|-- ", p.drkGray);
-                        p.write(String.Format(p.space).Substring(0, 89) + '|', p.blue);
-                    }
+                    for (int i = count; i < 10; i++) { p.LIfiller(); }
                 }
                 count += 1;
             }
@@ -76,6 +63,8 @@ namespace fileExplorer
                 p.write("select a menu item. ", p.wht);
                 p.write(p.br + "Enter - ", p.drkGray);
                 p.write("Open file or enter folder. ", p.wht);
+                p.write(p.br + "F -  ", p.drkGray);
+                p.write("Add to Favorites. ", p.wht);
                 p.write(p.br + "P or Backspace -  ", p.drkGray);
                 p.write("Move up a directory. ", p.wht);
                 p.write(p.br + p.br + "H) ", p.drkGray);
@@ -88,11 +77,14 @@ namespace fileExplorer
             p.write(p.br + "OR", p.drkGray);
             p.write(" Select an item by its ", p.wht);
             ConsoleKeyInfo k = p.rk("index number: ", p.drkGray, p.gray);
-            p.write(" ▓ Loading ▓ ", p.ylw);
+            ///Catch for holding a key down, auto closes after 10 identical keystrokes
+            keystrokes.Insert(0, k);
+            if (keystrokes.Count >= 10) { catchKeyHold(k); }
+            ///continue if not
             if (goToExplorer == false)
             {
-                if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow) { return displayPages(pages, leftRight(currentPage, k, pages), drives, goToExplorer, 1); }
-                else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { return displayPages(pages, currentPage, drives, goToExplorer, upDown(k, curRow, thisPage)); }
+                if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, leftRight(currentPage, k, pages), drives, goToExplorer, 1); }
+                else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, currentPage, drives, goToExplorer, upDown(k, curRow, thisPage)); }
                 else if (k.Key == ConsoleKey.Enter && goToExplorer == false)
                 {
                     if (curRow == 0) { curRow = 9; }
@@ -108,12 +100,15 @@ namespace fileExplorer
                     {
                         if (dataChoice == 0) { dataChoice = 10; }
                         if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
-                        else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); Thread.Sleep(850); return displayPages(pages, 0, drives, goToExplorer, curRow); }
+                        else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, drives, goToExplorer, curRow); }
                     }
                     else
                     {
                         switch (k.Key)
                         {
+                            case ConsoleKey.F:
+                                w.executeFileWriteAdd(currentDirectory);
+                                return currentDirectory;
                             case ConsoleKey.O:
                                 if (Directory.Exists(currentDirectory))
                                 {
@@ -149,7 +144,7 @@ namespace fileExplorer
                                 Environment.Exit(0); return null;
 
                             default:
-                                p.write(" " + "\'" + k.KeyChar + "\' is not an option.", p.red); p.rest(850); return displayPages(pages, 0, drives, goToExplorer, curRow);
+                                p.write(" " + "\'" + k.KeyChar + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, drives, goToExplorer, curRow);
                         }
                     }
                 }
@@ -241,6 +236,16 @@ namespace fileExplorer
             return direc;
         }
 
+        public List<DirectoryInfo> getFavorites()
+        {
+            List<string> favRaw = r.retrieveFavorites();
+            List<DirectoryInfo> dirFavs = new List<DirectoryInfo>();
+            foreach(string f in favRaw)
+            {
+                dirFavs.Add(new DirectoryInfo(f));
+            }
+            return dirFavs;
+        }
         public string getDrives()
         {
             DriveInfo[] allDrives = DriveInfo.GetDrives();
@@ -259,6 +264,14 @@ namespace fileExplorer
                     }
                 }
             }
+            List<DirectoryInfo> favorites = getFavorites();
+            foreach(DirectoryInfo f in favorites)
+            {
+                if (Directory.Exists(f.FullName))
+                {
+                    drivesRAW.Add(f);
+                }
+            }
             foreach (DirectoryInfo directory in myDrives)
             {
                 if (Directory.Exists(directory.FullName))
@@ -274,17 +287,22 @@ namespace fileExplorer
             List<pagedData> pages = createPages(drives);
             return displayPages(pages, 0, true, false, 1);
         }
-
-        //public void getSubDirs(string parentDir)
-        //{
-        //    List<string> dirWithContent = new List<string>();
-        //    try { direcPackRAW = thisDirec.GetDirectories().Where(x => !x.Attributes.HasFlag(FileAttributes.Hidden)).ToArray(); }
-        //    catch { }x``xxc
-        //}
         #endregion get data
 
         #region utils
-
+        public void catchKeyHold(ConsoleKeyInfo _key)
+        {
+            keysMatch = true;
+            keystrokes = keystrokes.Take(10).ToList();
+            foreach (ConsoleKeyInfo _k in keystrokes)
+            {
+                if (!_k.Equals(_key))
+                {
+                    keysMatch = false; break;
+                }
+            }
+            if (keysMatch) { Environment.Exit(0); }
+        }
         public int upDown(ConsoleKeyInfo k, int currentBar, pagedData page)
         {
             int itemCount = page.dataList.Count();
