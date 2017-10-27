@@ -27,7 +27,7 @@ namespace fileExplorer
             pagedData thisPage = pages[currentPage];
             string currentDirectory = getCurrentDirec(pages);
             if (atHome == true) { currentDirectory = "Home"; }
-            if(atFav == true) { currentDirectory = "Favorites"; }
+            if (atFav == true) { currentDirectory = "Favorites"; }
             int pCheck = currentDirectory.Split('\\').Count();
             p.resetConsole(0);
             p.topBarWithCurDir(currentDirectory);
@@ -66,19 +66,20 @@ namespace fileExplorer
             else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, currentPage, atHome, upDown(k, curRow, thisPage), atFav); }
             else if (k.Key == ConsoleKey.Enter)
             {
+                if (curRow == 0) { curRow = 9; }
+                else { curRow -= 1; }
                 if (atFav && File.Exists(pages[0].dataList[curRow]))
                 {
-                    if (curRow == 0) { curRow = 9; }
-                    else { curRow -= 1; }
-                    return pages[0].dataList[curRow];
-                    //Process.Start(pages[0].dataList[curRow]);
-                    //pages = showFavorites();
-                    //return displayPages(pages, currentPage, false, curRow, true);
+                    FileInfo newFile = new FileInfo(pages[0].dataList[curRow]);
+                    p.write(p.br + "Now opening ", p.blue); p.write(newFile.Name + ".", p.grn);
+                    p.write(p.br + "Loading ", p.grn);
+                    p.write("▓", p.drkGrn); p.rest(100);
+                    for (int i = 0; i < 3; i++) { p.write("|", p.wht); p.rest(25); p.write("▒", p.grn); p.rest(100); p.write("|", p.wht); p.rest(25); p.write("▓", p.grn); p.rest(100); }
+                    Process.Start(newFile.FullName);
+                    return null;
                 }
                 else
                 {
-                    if (curRow == 0) { curRow = 9; }
-                    else { curRow -= 1; }
                     if (File.Exists(pages[0].dataList[curRow]) || Directory.Exists(pages[currentPage].dataList[curRow])) { return pages[currentPage].dataList[curRow]; }
                     else { p.write("There was an Error with your request", p.red); return displayPages(pages, currentPage, false, curRow, false); }
                 }
@@ -89,9 +90,25 @@ namespace fileExplorer
                 bool isNumber = int.TryParse(k.KeyChar.ToString(), out dataChoice);
                 if (isNumber)
                 {
-                    if (dataChoice == 0) { dataChoice = 10; }
-                    if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
-                    else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, false, curRow, false); }
+                    if (atFav)
+                    {
+                        FileInfo newFile = new FileInfo(pages[0].dataList[dataChoice - 1]);
+                        if (newFile.Exists)
+                        {
+                            p.write(p.br + "Now opening ", p.blue); p.write(newFile.Name + ".", p.grn);
+                            p.write(p.br + "Loading ", p.grn);
+                            p.write("▓", p.drkGrn); p.rest(100);
+                            for (int i = 0; i < 3; i++) { p.write("|", p.wht); p.rest(25); p.write("▒", p.grn); p.rest(100); p.write("|", p.wht); p.rest(25); p.write("▓", p.grn); p.rest(100); }
+                            Process.Start(newFile.FullName);
+                        }
+                        return null;
+                    }
+                    else
+                    {
+                        if (dataChoice == 0) { dataChoice = 10; }
+                        if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
+                        else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, false, curRow, false); }
+                    }
                 }
                 else
                 {
@@ -186,24 +203,6 @@ namespace fileExplorer
                     }
                 }
             }
-            //else
-            //{
-            //        int folderChoice;
-            //        bool isNumber = int.TryParse(k.KeyChar.ToString(), out folderChoice);
-            //        if (isNumber)
-            //        {
-            //            if (folderChoice > 0 && folderChoice <= 9) { folderChoice -= 1; }
-            //            else if (folderChoice == 0) { folderChoice = 9; }
-            //            string path = pages[currentPage].dataList[folderChoice];
-            //            if (Directory.Exists(path)) { p.write(p.br + "Now opening ", p.blue); p.write(pages[currentPage].dataList[folderChoice], p.grn); p.write(" in explorer.", p.drkGray); p.rest(2500); Process.Start(pages[currentPage].dataList[folderChoice]); return "OpenFolder"; }
-            //            else { p.write("Error.", p.red); return displayPages(pages, currentPage, drives, curRow); }
-            //        }
-            //        else
-            //        {
-            //            if (k.KeyChar == 'x' || k.KeyChar == 'X') { Environment.Exit(0); return null; }
-            //            else { p.write("Invalid selection.", p.red); return displayPages(pages, currentPage, drives, curRow); }
-            //        }
-            //    }
         }
         public List<pagedData> createPages(List<string> _data)
         {

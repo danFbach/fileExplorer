@@ -30,7 +30,7 @@ namespace fileExplorer
             {
                 menu();
             }
-             FileInfo newFile = new FileInfo(path);
+            FileInfo newFile = new FileInfo(path);
             if (newFile.Exists)
             {
                 p.write(p.br + "Now opening " , p.blue); p.write(newFile.Name + ".", p.grn);

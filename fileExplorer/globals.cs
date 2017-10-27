@@ -8,7 +8,7 @@ namespace fileExplorer
 {
     public class globals
     {
-        public string version = "fileExplorer - v1.2";
+        public string version = "fileExplorer - v1.21";
         public int height = 22;
         public int width = 105;
     }
