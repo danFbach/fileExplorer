@@ -90,25 +90,35 @@ namespace fileExplorer
                 bool isNumber = int.TryParse(k.KeyChar.ToString(), out dataChoice);
                 if (isNumber)
                 {
-                    if (atFav)
+                    if (dataChoice == 0) { dataChoice = 10; }
+                    if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count())
                     {
-                        FileInfo newFile = new FileInfo(pages[0].dataList[dataChoice - 1]);
-                        if (newFile.Exists)
+                        if (atFav)
                         {
-                            p.write(p.br + "Now opening ", p.blue); p.write(newFile.Name + ".", p.grn);
-                            p.write(p.br + "Loading ", p.grn);
-                            p.write("▓", p.drkGrn); p.rest(100);
-                            for (int i = 0; i < 3; i++) { p.write("|", p.wht); p.rest(25); p.write("▒", p.grn); p.rest(100); p.write("|", p.wht); p.rest(25); p.write("▓", p.grn); p.rest(100); }
-                            Process.Start(newFile.FullName);
+                            FileInfo newFile = new FileInfo(pages[0].dataList[dataChoice - 1]);
+                            if (newFile.Exists)
+                            {
+                                p.write(p.br + "Now opening ", p.blue); p.write(newFile.Name + ".", p.grn);
+                                p.write(p.br + "Loading ", p.grn);
+                                p.write("▓", p.drkGrn); p.rest(100);
+                                for (int i = 0; i < 3; i++) { p.write("|", p.wht); p.rest(25); p.write("▒", p.grn); p.rest(100); p.write("|", p.wht); p.rest(25); p.write("▓", p.grn); p.rest(100); }
+                                Process.Start(newFile.FullName);
+                            }
+                            else if (Directory.Exists(pages[0].dataList[dataChoice - 1]))
+                            {
+                                return pages[currentPage].dataList[dataChoice - 1];
+                            }
+                            return null;
                         }
-                        return null;
+                        else
+                        {
+                            return pages[currentPage].dataList[dataChoice - 1]; 
+                        }
                     }
-                    else
-                    {
-                        if (dataChoice == 0) { dataChoice = 10; }
-                        if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
-                        else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, false, curRow, false); }
-                    }
+                    else {
+                        if (dataChoice == 10) { dataChoice = 0; }
+                        p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500);
+                        return displayPages(pages, 0, false, curRow, false); }
                 }
                 else
                 {

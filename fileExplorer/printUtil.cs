@@ -144,8 +144,8 @@ namespace fileExplorer
         #region printFormatting
         public void topBarPlain(string directory)
         {
-            write(space.Substring(0, 82) + "_____________________ " + br, drkGray);
-            write(" " + bar.Substring(0, 79), blue);
+            write(space.Substring(0, (101 - g.version.Length)) + bar.Substring(0, g.version.Length + 2) + br, drkGray);
+            write(" " + bar.Substring(0, (100 - 2 - g.version.Length)), blue);
             write("| " + g.version + " |" + br, drkGray);
             write("|                                                                                                     |\n\r", blue);
             write(" | ", blue);
@@ -155,12 +155,12 @@ namespace fileExplorer
         }
         public void topBarWithCurDir(string directory)
         {
-            write(space.Substring(0, 82) + "_____________________ " + br, drkGray);
-            write(" " + bar.Substring(0, 79), blue);
+            write(space.Substring(0, (101 - g.version.Length)) + bar.Substring(0, g.version.Length + 2) + br, drkGray);
+            write(" " + bar.Substring(0, (100 - 2 - g.version.Length)), blue);
             write("| " + g.version + " |" + br, drkGray);
             write("|                                                                                                     |\n\r", blue);
             write(" | ", blue);
-            write("Current Location: ", null);
+            write("Current Location:  ", null);
             if (directory.Length <= 81)
             {
                 write(string.Format("{0} " + space, directory).Substring(0, 81), wht);
