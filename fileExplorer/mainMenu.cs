@@ -33,10 +33,10 @@ namespace fileExplorer
             FileInfo newFile = new FileInfo(path);
             if (newFile.Exists)
             {
-                p.write(p.br + "Now opening " , p.blue); p.write(newFile.Name + ".", p.grn);
-                p.write(p.br + "Loading ",p.grn);
-                p.write("▓", p.drkGrn); p.rest(100);
-                for (int i = 0; i < 3; i++) { p.write("|", p.wht); p.rest(25); p.write("▒", p.grn); p.rest(100); p.write("|", p.wht); p.rest(25); p.write("▓", p.grn); p.rest(100); }
+                p.write(p.br + "Now opening " , p.accentColor0); p.write(newFile.Name + ".", p.accentColor1);
+                p.write(p.br + "Loading ",p.accentColor1);
+                p.write("▓", p.accentColor2); p.rest(100);
+                for (int i = 0; i < 3; i++) { p.write("|", p.mainColor0); p.rest(25); p.write("▒", p.accentColor1); p.rest(100); p.write("|", p.mainColor0); p.rest(25); p.write("▓", p.accentColor1); p.rest(100); }
                 Process.Start(newFile.FullName);
                 menu();
             }
@@ -52,7 +52,7 @@ namespace fileExplorer
 
         //    public void filter()
         //    {
-        //        string dir = p.rl(p.br + "Enter directory for files to be renamed. (Replacing periods with spaces.)" + p.br + "Directory: ", p.wht, p.blue);
+        //        string dir = p.rl(p.br + "Enter directory for files to be renamed. (Replacing periods with spaces.)" + p.br + "Directory: ", p.wht, p.mgnta);
         //        string[] _filePackRAW = Directory.GetFiles(dir);
         //        List<FileInfo> _filePack = new List<FileInfo>();
         //        List<FileInfo> _newFilePack = new List<FileInfo>();
@@ -70,7 +70,7 @@ namespace fileExplorer
         //            string cleanName = "Psych " + _filePack[i].Name;    
         //            File.Move(_filePack[i].FullName, _filePack[i].Directory + "\\" + cleanName);
         //        }
-        //        p.rk("pausing, press any key to continue.", p.blue, p.blk);
+        //        p.rk("pausing, press any key to continue.", p.mgnta, p.blk);
         //        filter();
         //    }
         #endregion renamingUtil

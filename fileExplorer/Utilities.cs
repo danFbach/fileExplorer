@@ -18,18 +18,18 @@ namespace fileExplorer
         {
             List<string> pathPack = e.getFolderPack(directory);
             List<pagedData> pages = e.createPages(pathPack);
-            if (pages.Count() > 0)
-            {
-                directory = e.displayPages(pages, 0, false, 1, false);
-            }
-            else
+            if(pages.Count == 0)
             {
                 string[] previousDirectoryRAW = directory.Split('\\');
                 string previousDirectory = "";
                 for (int i = 0; i < previousDirectoryRAW.Count() - 1; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; }
                 directory = previousDirectory;
-                p.write(p.br + "This directory does not contain anything or you do not have access to it.", p.red);
-                p.rest(2000);
+                p.write(p.br + "This directory does not contain any files or folders." + p.br, p.warningColor);
+                p.rk("Press Any Key to Continue.", p.mainColor0, p.mainColor0);
+            }
+            else
+            {
+                directory = e.displayPages(pages, 0, false, 1, false);
             }
             return directory;
         }
@@ -54,5 +54,7 @@ namespace fileExplorer
             else { return " "; }
         }
         #endregion pathFileRetrieval
+        #region errorCatch
+        #endregion errorCatch
     }
 }
