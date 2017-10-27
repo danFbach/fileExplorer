@@ -21,11 +21,13 @@ namespace fileExplorer
         #endregion generalVars
 
         #region page Creation and Formatting
-        public string displayPages(List<pagedData> pages, int currentPage, bool drives, bool goToExplorer, int curRow)
+        public string displayPages(List<pagedData> pages, int currentPage, bool atHome, int curRow, bool atFav)
         {
             int count = 1;
             pagedData thisPage = pages[currentPage];
             string currentDirectory = getCurrentDirec(pages);
+            if (atHome == true) { currentDirectory = "Home"; }
+            if(atFav == true) { currentDirectory = "Favorites"; }
             int pCheck = currentDirectory.Split('\\').Count();
             p.resetConsole(0);
             p.topBarWithCurDir(currentDirectory);
@@ -36,11 +38,11 @@ namespace fileExplorer
                 string[] nameData = item.Split('\\');
                 string itemName = "";
                 itemName = item;
-                if (!drives && nameData.Count() <= 1) { itemName = (itemName + p.space).Substring(0, 91); }
-                else if (!drives && nameData.Count() > 1) { itemName = (itemName.Split('\\').Last() + p.space).Substring(0, 91); }
+                if (!atHome && nameData.Count() <= 1) { itemName = (itemName + p.space).Substring(0, 91); }
+                else if (!atHome && nameData.Count() > 1 && !atFav) { itemName = (itemName.Split('\\').Last() + p.space).Substring(0, 91); }
                 else { itemName = (itemName + p.space).Substring(0, 91); }
                 ///CURRENT LIST ITEM
-                if (count == curRow && goToExplorer == false) { p.currentLI(_count, itemName); }
+                if (count == curRow) { p.currentLI(_count, itemName); }
                 ///ALL OTHER LIST ITEMS
                 else { p.genericLI(_count, itemName); }
                 ///FILLER LIST ITEMS
@@ -52,125 +54,156 @@ namespace fileExplorer
                 count += 1;
             }
             p.pagedBottomBar(currentPage, pages.Count() - 1);
-            if (goToExplorer == false)
-            {
-                p.write(p.br + "Left Arrow - ", p.drkGray);
-                p.write("Previous page", p.wht);
-                p.write(p.space.Substring(0, 54), p.wht);
-                p.write("Right Arrow - ", p.drkGray);
-                p.write("Next page", p.wht);
-                p.write(p.br + p.br + "Up/Down Arrow - ", p.drkGray);
-                p.write("select a menu item. ", p.wht);
-                p.write(p.br + "Enter - ", p.drkGray);
-                p.write("Open file or enter folder. ", p.wht);
-                p.write(p.br + "A -  ", p.drkGray);
-                p.write("Add to Favorites. ", p.wht);
-                p.write("F - ", p.drkGray);
-                p.write("View Favorites.", p.wht);
-                p.write(p.br + "P or Backspace -  ", p.drkGray);
-                p.write("Move up a directory. ", p.wht);
-                p.write(p.br + "H) ", p.drkGray);
-                p.write("Return to home directory. ", p.wht);
-                p.write(p.br + "O) ", p.drkGray);
-                p.write("Open active folder or file. ", p.wht);
-            }
-            p.write(p.br + "X) ", p.drkGray);
-            p.write("to Exit Explorer. ", p.wht);
-            p.write(p.br + "OR", p.drkGray);
-            p.write(" Select an item by its ", p.wht);
-            ConsoleKeyInfo k = p.rk("index number: ", p.drkGray, p.gray);
+            ///left/right arrow instructions
+            p.write(p.br + "Left Arrow - ", p.drkGray); p.write("Previous page", p.wht); p.write(p.space.Substring(0, 54), p.wht); p.write("Right Arrow - ", p.drkGray); p.write("Next page", p.wht);
+            p.write(p.br + "X) ", p.drkGray); p.write("to Exit Explorer. ", p.wht);
+            p.write(p.br + "F1 for HELP/instructions.", p.grn);
+            ConsoleKeyInfo k = p.rk(p.br + "===> ", p.drkGray, p.gray);
             ///Catch for holding a key down, auto closes after 10 identical keystrokes
             keystrokes.Insert(0, k);
             if (keystrokes.Count >= 10) { catchKeyHold(k); }
-            ///continue if not
-            if (goToExplorer == false)
+            if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, leftRight(currentPage, k, pages), atHome, 1, atFav); }
+            else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, currentPage, atHome, upDown(k, curRow, thisPage), atFav); }
+            else if (k.Key == ConsoleKey.Enter)
             {
-                if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, leftRight(currentPage, k, pages), drives, goToExplorer, 1); }
-                else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { p.write(" ▓ Loading ▓ ", p.ylw); return displayPages(pages, currentPage, drives, goToExplorer, upDown(k, curRow, thisPage)); }
-                else if (k.Key == ConsoleKey.Enter && goToExplorer == false)
+                if (atFav && File.Exists(pages[0].dataList[curRow]))
+                {
+                    if (curRow == 0) { curRow = 9; }
+                    else { curRow -= 1; }
+                    return pages[0].dataList[curRow];
+                    //Process.Start(pages[0].dataList[curRow]);
+                    //pages = showFavorites();
+                    //return displayPages(pages, currentPage, false, curRow, true);
+                }
+                else
                 {
                     if (curRow == 0) { curRow = 9; }
                     else { curRow -= 1; }
                     if (File.Exists(pages[0].dataList[curRow]) || Directory.Exists(pages[currentPage].dataList[curRow])) { return pages[currentPage].dataList[curRow]; }
-                    else { p.write("There was an Error with your request", p.red); return displayPages(pages, currentPage, drives, goToExplorer, curRow); }
-                }
-                else
-                {
-                    int dataChoice;
-                    bool isNumber = int.TryParse(k.KeyChar.ToString(), out dataChoice);
-                    if (isNumber)
-                    {
-                        if (dataChoice == 0) { dataChoice = 10; }
-                        if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
-                        else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, drives, goToExplorer, curRow); }
-                    }
-                    else
-                    {
-                        switch (k.Key)
-                        {
-                            case ConsoleKey.A:
-                                w.executeFileWriteAdd(currentDirectory);
-                                return currentDirectory;
-                            case ConsoleKey.F:
-                                pages = showFavorites();
-                                return displayPages(pages, currentPage, drives, goToExplorer, curRow);
-                            case ConsoleKey.O:
-                                if (Directory.Exists(currentDirectory))
-                                {
-                                    p.write("Now opening ", p.blue); p.write(currentDirectory, p.grn); p.write(" in explorer.", p.drkGray);
-                                    p.rest(2500);
-                                    Process.Start(currentDirectory);
-                                    return "OpenFolder";
-                                }
-                                else
-                                {
-                                    p.write("Error.", p.red);
-                                    return currentDirectory;
-                                }
-                            case ConsoleKey.H:
-                                return null;
-                            case ConsoleKey.Backspace:
-                            case ConsoleKey.P:
-                                if (pCheck > 2)
-                                {
-                                    string[] previousDirectoryRAW = pages[currentPage].dataList[0].Split('\\');
-                                    string previousDirectory = "";
-                                    for (int i = 0; i < previousDirectoryRAW.Count() - 2; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; }
-                                    return previousDirectory;
-                                }
-                                else
-                                {
-                                    p.resetConsole(0);
-                                    return getDrives();
-                                }
-
-                            case ConsoleKey.X:
-                                Environment.Exit(0); return null;
-
-                            default:
-                                p.write(" " + "\'" + k.KeyChar + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, drives, goToExplorer, curRow);
-                        }
-                    }
+                    else { p.write("There was an Error with your request", p.red); return displayPages(pages, currentPage, false, curRow, false); }
                 }
             }
             else
             {
-                int folderChoice;
-                bool isNumber = int.TryParse(k.KeyChar.ToString(), out folderChoice);
+                int dataChoice;
+                bool isNumber = int.TryParse(k.KeyChar.ToString(), out dataChoice);
                 if (isNumber)
                 {
-                    if (folderChoice > 0 && folderChoice <= 9) { folderChoice -= 1; }
-                    else if (folderChoice == 0) { folderChoice = 9; }
-                    string path = pages[currentPage].dataList[folderChoice];
-                    if (Directory.Exists(path)) { p.write(p.br + "Now opening ", p.blue); p.write(pages[currentPage].dataList[folderChoice], p.grn); p.write(" in explorer.", p.drkGray); p.rest(2500); Process.Start(pages[currentPage].dataList[folderChoice]); return "OpenFolder"; }
-                    else { p.write("Error.", p.red); return displayPages(pages, currentPage, drives, goToExplorer, curRow); }
+                    if (dataChoice == 0) { dataChoice = 10; }
+                    if (dataChoice >= 0 && dataChoice <= pages[currentPage].dataList.Count()) { return pages[currentPage].dataList[dataChoice - 1]; }
+                    else { if (dataChoice == 10) { dataChoice = 0; } p.write(" \'" + dataChoice + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, false, curRow, false); }
                 }
                 else
                 {
-                    if (k.KeyChar == 'x' || k.KeyChar == 'X') { Environment.Exit(0); return null; }
-                    else { p.write("Invalid selection.", p.red); return displayPages(pages, currentPage, drives, goToExplorer, curRow); }
+                    switch (k.Key)
+                    {
+                        case ConsoleKey.F1:
+                            p.helpMenu();
+                            return null;
+                        case ConsoleKey.U:
+                            string newDIR = "";
+                            List<string> dirRAW = currentDirectory.Split('\\').ToList();
+                            if (dirRAW.Count > 2)
+                            {
+                                dirRAW.RemoveRange(dirRAW.Count - 2, 2);
+                                foreach (string d in dirRAW) { newDIR += d + "\\"; }
+                                return newDIR;
+                            }
+                            else
+                            {
+                                if (atHome == true)
+                                {
+                                    p.write("In Home Directory. Returning Home.", p.ylw);
+                                    p.rest(1000);
+                                    return null;
+                                }
+                                else
+                                {
+                                    p.write(p.br + "Already in a Root Directory. ", p.red);
+                                    p.rest(1000);
+                                    return currentDirectory;
+                                }
+                            }
+                        case ConsoleKey.A:
+                            if (curRow == 0) { curRow = 9; } else { curRow -= 1; }
+                            string selItemToAdd = pages[currentPage].dataList[curRow];
+                            w.executeFileWriteAdd(selItemToAdd);
+                            p.write(p.br + " Successfully Added ", p.grn); p.write(selItemToAdd, p.wht); p.write(" to Favorites List!", p.grn);
+                            p.rk(p.br + "Press Any Key to Continue.", p.wht, p.wht);
+                            return currentDirectory;
+                        case ConsoleKey.F:
+                            pages = showFavorites();
+                            return displayPages(pages, currentPage, false, curRow, true);
+                        case ConsoleKey.R:
+                            if (atFav)
+                            {
+                                if (curRow == 0) { curRow = 9; } else { curRow -= 1; }
+                                string selItemToRemove = pages[currentPage].dataList[curRow];
+                                w.executeFileWriteRemove(selItemToRemove);
+                                p.write(p.br + selItemToRemove + " Has Been Removed.", p.red);
+                                p.rk(p.br + "Press Any Key to Continue.", p.wht, p.wht);
+                                return null;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        case ConsoleKey.O:
+                            if (Directory.Exists(currentDirectory))
+                            {
+                                p.write("Now opening ", p.blue); p.write(currentDirectory, p.grn); p.write(" in explorer.", p.drkGray);
+                                p.rest(2500);
+                                Process.Start(currentDirectory);
+                                return "OpenFolder";
+                            }
+                            else
+                            {
+                                p.write("Error.", p.red);
+                                return currentDirectory;
+                            }
+                        case ConsoleKey.H:
+                            return null;
+                        case ConsoleKey.Backspace:
+                        case ConsoleKey.P:
+                            if (pCheck > 2)
+                            {
+                                string[] previousDirectoryRAW = pages[currentPage].dataList[0].Split('\\');
+                                string previousDirectory = "";
+                                for (int i = 0; i < previousDirectoryRAW.Count() - 2; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; }
+                                return previousDirectory;
+                            }
+                            else
+                            {
+                                p.resetConsole(0);
+                                return getDrives();
+                            }
+
+                        case ConsoleKey.X:
+                            Environment.Exit(0); return null;
+
+                        default:
+                            p.write(" " + "\'" + k.KeyChar + "\' is not an option.", p.red); p.rest(500); return displayPages(pages, 0, atHome, curRow, atFav);
+                    }
                 }
             }
+            //else
+            //{
+            //        int folderChoice;
+            //        bool isNumber = int.TryParse(k.KeyChar.ToString(), out folderChoice);
+            //        if (isNumber)
+            //        {
+            //            if (folderChoice > 0 && folderChoice <= 9) { folderChoice -= 1; }
+            //            else if (folderChoice == 0) { folderChoice = 9; }
+            //            string path = pages[currentPage].dataList[folderChoice];
+            //            if (Directory.Exists(path)) { p.write(p.br + "Now opening ", p.blue); p.write(pages[currentPage].dataList[folderChoice], p.grn); p.write(" in explorer.", p.drkGray); p.rest(2500); Process.Start(pages[currentPage].dataList[folderChoice]); return "OpenFolder"; }
+            //            else { p.write("Error.", p.red); return displayPages(pages, currentPage, drives, curRow); }
+            //        }
+            //        else
+            //        {
+            //            if (k.KeyChar == 'x' || k.KeyChar == 'X') { Environment.Exit(0); return null; }
+            //            else { p.write("Invalid selection.", p.red); return displayPages(pages, currentPage, drives, curRow); }
+            //        }
+            //    }
         }
         public List<pagedData> createPages(List<string> _data)
         {
@@ -243,16 +276,16 @@ namespace fileExplorer
         public List<pagedData> showFavorites()
         {
             List<string> favRaw = r.retrieveFavorites();
-            List<DirectoryInfo> dirFavs = new List<DirectoryInfo>();
+            List<DirectoryInfo> favsPack = new List<DirectoryInfo>();
             List<string> favorites = new List<string>();
-            foreach(string f in favRaw)
+            foreach (string f in favRaw)
             {
-                dirFavs.Add(new DirectoryInfo(f));
+                favsPack.Add(new DirectoryInfo(f));
             }
-            dirFavs = dirFavs.OrderBy(x => x.FullName).ToList();
-            foreach (DirectoryInfo f in dirFavs)
+            favsPack = favsPack.OrderBy(x => x.FullName).ToList();
+            foreach (DirectoryInfo f in favsPack)
             {
-                if (Directory.Exists(f.FullName))
+                if (Directory.Exists(f.FullName) || File.Exists(f.FullName))
                 {
                     favorites.Add(f.FullName);
                 }
@@ -290,7 +323,7 @@ namespace fileExplorer
                 drives.Add(drive.FullName);
             }
             List<pagedData> pages = createPages(drives);
-            return displayPages(pages, 0, true, false, 1);
+            return displayPages(pages, 0, true, 1, false);
         }
         #endregion get data
 

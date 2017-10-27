@@ -142,17 +142,28 @@ namespace fileExplorer
         #endregion printing
 
         #region printFormatting
-        public void topBarWithCurDir(string directory)
+        public void topBarPlain(string directory)
         {
             write(space.Substring(0, 82) + "_____________________ " + br, drkGray);
-            write( " " + bar.Substring(0, 79), blue);
+            write(" " + bar.Substring(0, 79), blue);
             write("| " + g.version + " |" + br, drkGray);
             write("|                                                                                                     |\n\r", blue);
             write(" | ", blue);
-            write("Current Directory: ", null);
+            write(string.Format("{0}{1} " + space,space.Substring(0,32), directory).Substring(0, 100), wht);
+            write("|", blue);
+            write(br + "|" + bar + "|" + br, blue);
+        }
+        public void topBarWithCurDir(string directory)
+        {
+            write(space.Substring(0, 82) + "_____________________ " + br, drkGray);
+            write(" " + bar.Substring(0, 79), blue);
+            write("| " + g.version + " |" + br, drkGray);
+            write("|                                                                                                     |\n\r", blue);
+            write(" | ", blue);
+            write("Current Location: ", null);
             if (directory.Length <= 81)
             {
-                write(string.Format("{0} " + space, directory).Substring(0, 81) , wht);
+                write(string.Format("{0} " + space, directory).Substring(0, 81), wht);
                 write("|", blue);
             }
             else
@@ -161,10 +172,10 @@ namespace fileExplorer
                 write("|", blue);
                 int dirLength = ((directory.Length - 80) / 100) + 1;
                 int subString = 80;
-                for(int i = 0;i < dirLength; i++)
+                for (int i = 0; i < dirLength; i++)
                 {
                     write(br + "| ", blue);
-                    write(string.Format("{0}" + space, directory.Substring(subString)).Substring(0, 100) , wht);
+                    write(string.Format("{0}" + space, directory.Substring(subString)).Substring(0, 100), wht);
                     write("|", blue);
                     subString += 99;
                 }
@@ -172,7 +183,7 @@ namespace fileExplorer
             write(br + "|" + bar + "|" + br + "|", blue);
             write(" Index", wht);
             write(" |  ", drkGray);
-            write(string.Format("Directory / File Name" + space).Substring(0 ,91), wht);
+            write(string.Format("Directory / File Name" + space).Substring(0, 91), wht);
             write("|", blue);
         }
 
@@ -210,6 +221,23 @@ namespace fileExplorer
             write(br + "| ", blue);
             write("- X) -|- ", drkGray);
             write(String.Format(space).Substring(0, 91) + '|', blue);
+        }
+        public void helpMenu()
+        {
+            resetConsole(0);
+            topBarPlain("Welcome to fileExplorer's Help Menu!");
+            write(br + "Standard Commands:", grn);
+            write(br + "     Enter)   ", drkGray); write("Opens the", wht); write(" Highlighted", ylw); write(" File or Directory. ", wht);
+            write(br + "     0-9)     ", drkGray); write("Select an Item by ", wht); write("INDEX", ylw); write(" Number tp Open it.", wht);
+            write(br + "     Up/Down) ", drkGray); write("Changes ", wht); write("Highlighted(selected)", ylw); write(" Menu item.", wht);
+            write(br + "     O)       ", drkGray); write("Opens ", wht); write(" Current Location", ylw); write(" in a File Explorer.", wht);
+            write(br + "     U)       ", drkGray); write("Moves ", wht); write("UP", ylw); write(" a Direrctory", wht);
+            write(br + "     H)       ", drkGray); write("Returns ", wht); write("HOME", ylw); write(". ", wht);
+            write(br + "Favorites List: ", grn); write("A list of favorite directories that you can jump to quickly.", gray);
+            write(br + "     A) ", drkGray); write("Adds Highlighted Item to Favorites. ", wht);
+            write(br + "     F) ", drkGray); write("View Favorites.", wht);
+            write(br + "     R) ", drkGray); write("Removes Highlighted Favorite.", wht);
+            rk(br + "Press Any Key to return to the main menu. ===>", drkGray, drkGray);
         }
         #endregion printFormatting
     }
