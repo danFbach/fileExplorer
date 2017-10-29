@@ -133,8 +133,9 @@ namespace fileExplorer
         #region printFormatting
         public void versionBar()
         {
-            write(space.Substring(0, (101 - g.version.Length)) + bar.Substring(0, g.version.Length + 2) + br, mainColor1);
-            write(" " + bar.Substring(0, (100 - 2 - g.version.Length)), accentColor0); write("| ", mainColor1); write(g.version, accentColor1); write(" |" + br, mainColor1);
+            g.updateVersion();
+            write(space.Substring(0, (101 - g._v.Length)) + bar.Substring(0, g._v.Length + 2) + br, mainColor1);
+            write(" " + bar.Substring(0, (100 - 2 - g._v.Length)), accentColor0); write("| ", mainColor1); write(g._v, accentColor1); write(" |" + br, mainColor1);
             write("|                                                                                                     |\n\r", accentColor0);
             write(" | ", accentColor0);
         }

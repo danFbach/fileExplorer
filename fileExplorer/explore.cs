@@ -67,15 +67,26 @@ namespace fileExplorer
             {
                 if (curRow == 0) { curRow = 9; }
                 else { curRow -= 1; }
-                if (atFav && File.Exists(pages[0].dataList[curRow]))
+                if (atFav)
                 {
-                    FileInfo newFile = new FileInfo(pages[0].dataList[curRow]);
-                    p.write(p.br + "Now opening ", p.accentColor0); p.write(newFile.Name + ".", p.accentColor1);
-                    p.write(p.br + "Loading ", p.accentColor1);
-                    p.write("▓", p.accentColor2); p.rest(100);
-                    for (int i = 0; i < 3; i++) { p.write("|", p.mainColor0); p.rest(25); p.write("▒", p.accentColor1); p.rest(100); p.write("|", p.mainColor0); p.rest(25); p.write("▓", p.accentColor1); p.rest(100); }
-                    Process.Start(newFile.FullName);
-                    return null;
+                    if (File.Exists(pages[currentPage].dataList[curRow]))
+                    {
+                        FileInfo newFile = new FileInfo(pages[0].dataList[curRow]);
+                        p.write(p.br + "Now opening ", p.accentColor0); p.write(newFile.Name + ".", p.accentColor1);
+                        p.write(p.br + "Loading ", p.accentColor1);
+                        p.write("▓", p.accentColor2); p.rest(100);
+                        for (int i = 0; i < 3; i++) { p.write("|", p.mainColor0); p.rest(25); p.write("▒", p.accentColor1); p.rest(100); p.write("|", p.mainColor0); p.rest(25); p.write("▓", p.accentColor1); p.rest(100); }
+                        Process.Start(newFile.FullName);
+                        return null;
+                    }
+                    else if (Directory.Exists(pages[currentPage].dataList[curRow]))
+                    {
+                        return pages[currentPage].dataList[curRow];
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -94,7 +105,7 @@ namespace fileExplorer
                     {
                         if (atFav)
                         {
-                            FileInfo newFile = new FileInfo(pages[0].dataList[dataChoice - 1]);
+                            FileInfo newFile = new FileInfo(pages[currentPage].dataList[dataChoice - 1]);
                             if (newFile.Exists)
                             {
                                 p.write(p.br + "Now opening ", p.accentColor0); p.write(newFile.Name + ".", p.accentColor1);
@@ -102,22 +113,25 @@ namespace fileExplorer
                                 p.write("▓", p.accentColor2); p.rest(100);
                                 for (int i = 0; i < 3; i++) { p.write("|", p.mainColor0); p.rest(25); p.write("▒", p.accentColor1); p.rest(100); p.write("|", p.mainColor0); p.rest(25); p.write("▓", p.accentColor1); p.rest(100); }
                                 Process.Start(newFile.FullName);
+                                return null;
                             }
-                            else if (Directory.Exists(pages[0].dataList[dataChoice - 1]))
+                            else if (Directory.Exists(pages[currentPage].dataList[dataChoice - 1]))
                             {
                                 return pages[currentPage].dataList[dataChoice - 1];
                             }
-                            return null;
+                            else
+                            {
+                                return null;
+                            }
                         }
-                        else
-                        {
-                            return pages[currentPage].dataList[dataChoice - 1]; 
-                        }
+                        else { return pages[currentPage].dataList[dataChoice - 1]; }
                     }
-                    else {
+                    else
+                    {
                         if (dataChoice == 10) { dataChoice = 0; }
                         p.write(" \'" + dataChoice + "\' is not an option.", p.warningColor); p.rest(500);
-                        return displayPages(pages, 0, false, curRow, false); }
+                        return displayPages(pages, 0, false, curRow, false);
+                    }
                 }
                 else
                 {
@@ -137,11 +151,18 @@ namespace fileExplorer
                             }
                             else
                             {
-                                if (atHome == true)
+                                if (atHome)
                                 {
                                     p.write("In Home Directory. Returning Home.", p.accentColor0);
-                                    p.rest(1000);
+                                    p.rest(1500);
                                     return null;
+                                }
+                                else if (atFav)
+                                {
+                                    p.write("In Favorite Directory. There is no Directory Above This.", p.accentColor0);
+                                    p.rest(1500);
+                                    pages = showFavorites();
+                                    return displayPages(pages, 0, false, 1, true);
                                 }
                                 else
                                 {
@@ -159,7 +180,7 @@ namespace fileExplorer
                             return currentDirectory;
                         case ConsoleKey.F:
                             pages = showFavorites();
-                            return displayPages(pages, 0, false, 0, true);
+                            return displayPages(pages, 0, false, 1, true);
                         case ConsoleKey.R:
                             if (atFav)
                             {
@@ -173,9 +194,24 @@ namespace fileExplorer
                             }
                             else
                             {
-                                return null;
+                                p.rk("This command has no function here. Press Any Key to Continue.", p.mainColor0, p.mainColor0);
+                                if (atHome)
+                                {
+                                    return null;
+                                }
+                                else
+                                {
+                                    return displayPages(pages, currentPage, false, curRow, true);
+                                }
                             }
                         case ConsoleKey.O:
+                            if(atFav || atHome)
+                            {
+                                p.rk("This command has no function here. Press Any Key to Continue.", p.mainColor0, p.mainColor0);
+                                if (atHome) { return null; }
+                                else if (atFav) { pages = showFavorites(); return displayPages(pages, currentPage, false, curRow, true); }
+                                else { return null; }
+                            }
                             if (Directory.Exists(currentDirectory))
                             {
                                 p.write("Now opening ", p.accentColor0); p.write(currentDirectory, p.accentColor1); p.write(" in explorer.", p.mainColor1);
@@ -196,21 +232,6 @@ namespace fileExplorer
                             Environment.Exit(0); return null;
                         default:
                             p.write(" " + "\'" + k.KeyChar + "\' is not an option.", p.warningColor); p.rest(500); return displayPages(pages, 0, atHome, curRow, atFav);
-                            ///depricated commands
-                            //case ConsoleKey.Backspace:
-                            //case ConsoleKey.P:
-                            //    if (pCheck > 2)
-                            //    {
-                            //        string[] previousDirectoryRAW = pages[currentPage].dataList[0].Split('\\');
-                            //        string previousDirectory = "";
-                            //        for (int i = 0; i < previousDirectoryRAW.Count() - 2; i++) { previousDirectory += previousDirectoryRAW[i] + @"\"; }
-                            //        return previousDirectory;
-                            //    }
-                            //    else
-                            //    {
-                            //        p.resetConsole(0);
-                            //        return getDrives();
-                            //    }
                     }
                 }
             }
@@ -368,7 +389,8 @@ namespace fileExplorer
                     }
                 }
                 p.rest(1500);
-                Environment.Exit(0); }
+                Environment.Exit(0);
+            }
         }
         public int upDown(ConsoleKeyInfo k, int currentBar, pagedData page)
         {

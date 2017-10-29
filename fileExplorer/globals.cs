@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace fileExplorer
 {
-    public class globals
+    class globals
     {
-        public string version = "fileExplorer - v1.31";
+        Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         public int height = 22;
         public int width = 105;
+        public string _v = "";
+        public void updateVersion()
+        {
+            _v = "fileExplorer - v" + v.ToString();
+        }
     }
 }
