@@ -7,7 +7,6 @@ namespace fileExplorer
         static void Main(string[] args)
         {
             globals g = new globals();
-            version _v = new version();
             g.updateVersion();
             Console.SetWindowSize(g.width, g.height);
             Console.BufferHeight = g.height;
