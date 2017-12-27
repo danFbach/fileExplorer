@@ -8,6 +8,7 @@ namespace fileExplorer
         {
             globals g = new globals();
             g.updateVersion();
+            Console.CursorVisible = false;
             Console.SetWindowSize(g.width, g.height);
             Console.BufferHeight = g.height;
             Console.BufferWidth = g.width;

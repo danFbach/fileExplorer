@@ -13,6 +13,8 @@ namespace fileExplorer
         public string mainColor0 = "white";
         public string mainColor1 = "darkgray";
         public string warningColor = "red";
+        public string background0 = "white";
+        public string background1 = "black";
         public string bar = "_____________________________________________________________________________________________________";
         public string space = @"                                                                                                                                                                                                        ";
         public string br = "\n\r ";
@@ -77,6 +79,65 @@ namespace fileExplorer
                     break;
             }
         }
+        public void pickBackground(string color)
+        {
+            switch (color)
+            {
+                /// NORMAL COLORS
+                case "blue":
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    break;
+                case "cyan":
+                    Console.BackgroundColor = ConsoleColor.Cyan;
+                    break;
+                case "gray":
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    break;
+                case "green":
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    break;
+                case "magenta":
+                    Console.BackgroundColor = ConsoleColor.Magenta;
+                    break;
+                case "red":
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    break;
+                case "yellow":
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    break;
+                /// DARK COLORS
+                case "darkblue":
+                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    break;
+                case "darkcyan":
+                    Console.BackgroundColor = ConsoleColor.DarkCyan;
+                    break;
+                case "darkgray":
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    break;
+                case "darkgreen":
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    break;
+                case "darkmagenta":
+                    Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                    break;
+                case "darkred":
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    break;
+                case "darkyellow":
+                    Console.BackgroundColor = ConsoleColor.DarkYellow;
+                    break;
+                case "white":
+                    Console.BackgroundColor = ConsoleColor.White;
+                    break;
+                case "black":
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    break;
+                default:
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    break;
+            }
+        }
         #endregion globalVars
 
         #region printTools
@@ -88,6 +149,7 @@ namespace fileExplorer
         {
             Thread.Sleep(rest);
             Console.Clear();
+            Console.CursorVisible = false;
         }
         public void pause() { write("Press any Key to Continue.", warningColor); Console.ReadKey(); }
 
@@ -100,18 +162,10 @@ namespace fileExplorer
             ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
 
             ConsoleKeyInfo returnData;
-            if (colorOUT != null) { colorIN = colorIN.ToLower(); }
-            pickColor(colorOUT);
-            Console.Write(_input);
-            if (colorIN != null) { colorIN = colorIN.ToLower(); }
-            pickColor(colorIN);
+            write(_input, colorIN);
             returnData = Console.ReadKey(true);
             if (returnData.Key == ConsoleKey.LeftArrow || returnData.Key == ConsoleKey.RightArrow) { return returnData; }
-            else
-            {
-                rest(500);
-                return returnData;
-            }
+            else{return returnData;}
         }
 
         #endregion Reading
@@ -127,7 +181,30 @@ namespace fileExplorer
             }
             pickColor(color);
             Console.Write(_input);
-        }       
+        }
+        public void write(string _input, string color, string backgroundColor)
+        {
+            ///RESET BACKGROUND TO BLACK IF BLACK FOREGROUND IS CHOSEN AT ANY POINT
+            if(backgroundColor != null)
+            {
+                backgroundColor = backgroundColor.ToLower();
+            }
+            else
+            {
+                backgroundColor = "black";
+            }
+            if (color != null)
+            {
+                color = color.ToLower();
+            }
+            else
+            {
+                color = mainColor0;
+            }
+            pickColor(color);
+            pickBackground(backgroundColor);
+            Console.Write(_input);
+        }
         #endregion printing
 
         #region printFormatting
@@ -211,9 +288,25 @@ namespace fileExplorer
             write("- X) -|- ", mainColor1);
             write(String.Format(space).Substring(0, 91) + '|', accentColor0);
         }
+        public void commandBar()
+        {
+            write(br + "Arrows", accentColor0);
+            write("Change Item/Page", background1, accentColor0);
+            write(" Enter", accentColor0);
+            write("Open Current Item/Directory", background1, accentColor0);
+            write(" 0-9", accentColor0);
+            write("Open Item/Page", background1, accentColor0);
+            write(" U", accentColor0);
+            write("Up Directory", background1, accentColor0);
+            write(" F1", accentColor0);
+            write("Help/Commands", background1, accentColor0);
+        }
         public void helpMenu()
         {
             resetConsole(0);
+            Console.SetWindowSize(g.width, g.heightTall);
+            Console.BufferHeight = g.heightTall;
+            Console.BufferWidth = g.width;
             topBarPlain("Welcome to fileExplorer's Help Menu!");
             write(br + "Directional/Selection Commands:", accentColor1);
             write(br + "     Page Down & Left Arrow |", mainColor1); write("Previous page", mainColor0);
@@ -231,6 +324,9 @@ namespace fileExplorer
             write(br + "     F       |", mainColor1); write("View", accentColor0); write(" Favorites.", mainColor0);
             write(br + "     R       |", mainColor1); write("Removes ", mainColor0); write("Highlighted", accentColor0); write(" Favorite.", mainColor0);
             rk(br + "Press Any Key to return to the main menu. ===>", mainColor1, mainColor1);
+            Console.SetWindowSize(g.width, g.height);
+            Console.BufferHeight = g.height;
+            Console.BufferWidth = g.width;
         }
         #endregion printFormatting
     }

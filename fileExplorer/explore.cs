@@ -55,14 +55,15 @@ namespace fileExplorer
                 count += 1;
             }
             p.pagedBottomBar(currentPage, pages.Count() - 1);
-            p.write(p.br + "F1 for HELP/instructions.", p.accentColor1);
-            ConsoleKeyInfo k = p.rk(p.br + "===> ", p.mainColor1, p.accentColor0);
+            p.commandBar();
+            //p.write(p.br + "F1 for HELP/instructions.", p.accentColor1);
+            ConsoleKeyInfo k = p.rk("", p.mainColor1, p.accentColor0);
             ///Catch for holding a key down, auto closes after 10 identical keystrokes
             keystrokes.Insert(0, k);
             if (keystrokes.Count >= 20) { catchKeyHold(k); }
             ///end catch
-            if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow || k.Key == ConsoleKey.PageDown || k.Key == ConsoleKey.PageUp) { p.write(" ▓ Loading ▓ ", p.accentColor0); return displayPages(pages, leftRight(currentPage, k, pages), atHome, 1, atFav); }
-            else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { p.write(" ▓ Loading ▓ ", p.accentColor0); return displayPages(pages, currentPage, atHome, upDown(k, curRow, thisPage), atFav); }
+            if (k.Key == ConsoleKey.LeftArrow || k.Key == ConsoleKey.RightArrow || k.Key == ConsoleKey.PageDown || k.Key == ConsoleKey.PageUp) { /*p.write(" ▓ Loading ▓ ", p.accentColor0);*/ return displayPages(pages, leftRight(currentPage, k, pages), atHome, 1, atFav); }
+            else if (k.Key == ConsoleKey.UpArrow || k.Key == ConsoleKey.DownArrow) { /*p.write(" ▓ Loading ▓ ", p.accentColor0);*/ return displayPages(pages, currentPage, atHome, upDown(k, curRow, thisPage), atFav); }
             else if (k.Key == ConsoleKey.Enter)
             {
                 if (curRow == 0) { curRow = 9; }
@@ -229,6 +230,7 @@ namespace fileExplorer
                             return null;
                         case ConsoleKey.End:
                         case ConsoleKey.X:
+                        case ConsoleKey.Escape:
                             Environment.Exit(0); return null;
                         default:
                             p.write(" " + "\'" + k.KeyChar + "\' is not an option.", p.warningColor); p.rest(500); return displayPages(pages, 0, atHome, curRow, atFav);
@@ -375,18 +377,13 @@ namespace fileExplorer
             if (keysMatch)
             {
                 p.write(p.br + "The same Key has been pushed over 20 times." + p.br + "The program will now close to prevent opening files by accident.", p.warningColor);
-                p.write("10", p.warningColor);
-                for (int i = 9; i > -1; i--)
+                p.write("5", p.warningColor);
+                for (int i = 4; i > 0; i--)
                 {
-                    p.rest(1000);
-                    if (i % 2 == 0)
-                    {
-                        p.write("." + i, p.warningColor);
-                    }
-                    else
-                    {
-                        p.write("." + i, p.mainColor0);
-                    }
+                    p.rest(500);
+                    p.write(".", p.mainColor0);
+                    p.rest(500);
+                    p.write(i.ToString(), p.warningColor);
                 }
                 p.rest(1500);
                 Environment.Exit(0);
