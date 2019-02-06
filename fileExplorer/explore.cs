@@ -142,6 +142,7 @@ namespace fileExplorer
                             p.helpMenu();
                             return null;
                         case ConsoleKey.U:
+                        case ConsoleKey.Backspace:
                             string newDIR = "";
                             List<string> dirRAW = currentDirectory.Split('\\').ToList();
                             if (dirRAW.Count > 2)
