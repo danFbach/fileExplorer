@@ -14,8 +14,7 @@ namespace fileExplorer
         public List<string> retrieveFavorites()
         {
             List<string> favorites = new List<string>();
-            if (File.Exists(filePath))
-            {
+            if (File.Exists(filePath)) {
                 string[] favoritesRaw = File.ReadAllLines(filePath);
                 foreach(string f in favoritesRaw)
                 {

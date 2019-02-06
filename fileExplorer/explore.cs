@@ -163,7 +163,7 @@ namespace fileExplorer
                                 {
                                     p.write("In Favorite Directory. There is no Directory Above This.", p.accentColor0);
                                     p.rest(1500);
-                                    pages = showFavorites();
+                                    pages = showFavorites(pages);
                                     return displayPages(pages, 0, false, 1, true);
                                 }
                                 else
@@ -181,7 +181,7 @@ namespace fileExplorer
                             p.rk(p.br + "Press Any Key to Continue.", p.mainColor0, p.mainColor0);
                             return currentDirectory;
                         case ConsoleKey.F:
-                            pages = showFavorites();
+                            pages = showFavorites(pages);
                             return displayPages(pages, 0, false, 1, true);
                         case ConsoleKey.R:
                             if (atFav)
@@ -191,7 +191,7 @@ namespace fileExplorer
                                 w.executeFileWriteRemove(selItemToRemove);
                                 p.write(p.br + selItemToRemove + " Has Been Removed.", p.warningColor);
                                 p.rk(p.br + "Press Any Key to Continue.", p.mainColor0, p.mainColor0);
-                                pages = showFavorites();
+                                pages = showFavorites(pages);
                                 return displayPages(pages, currentPage, false, curRow, true);
                             }
                             else
@@ -211,7 +211,7 @@ namespace fileExplorer
                             {
                                 p.rk("This command has no function here. Press Any Key to Continue.", p.mainColor0, p.mainColor0);
                                 if (atHome) { return null; }
-                                else if (atFav) { pages = showFavorites(); return displayPages(pages, currentPage, false, curRow, true); }
+                                else if (atFav) { pages = showFavorites(pages); return displayPages(pages, currentPage, false, curRow, true); }
                                 else { return null; }
                             }
                             if (Directory.Exists(currentDirectory))
@@ -307,25 +307,30 @@ namespace fileExplorer
             return direc;
         }
 
-        public List<pagedData> showFavorites()
+        public List<pagedData> showFavorites(List<string> current_pages)
         {
-            List<string> favRaw = r.retrieveFavorites();
-            List<DirectoryInfo> favsPack = new List<DirectoryInfo>();
-            List<string> favorites = new List<string>();
-            foreach (string f in favRaw)
-            {
-                favsPack.Add(new DirectoryInfo(f));
-            }
-            favsPack = favsPack.OrderBy(x => x.FullName).ToList();
-            foreach (DirectoryInfo f in favsPack)
-            {
-                if (Directory.Exists(f.FullName) || File.Exists(f.FullName))
+            List<string> raw_favorites = r.retrieveFavorites();
+            List<string> items = new List<string>();
+            if(raw_favorites.Count() > 0){
+                foreach (string f in raw_favorites)
                 {
-                    favorites.Add(f.FullName);
+                    Directory d = new DirectoryInfo(f);
+                    if (Directory.Exists(d.FullName) || File.Exists(d.FullName))
+                    {
+                        items.Add(d.FullName);
+                    }
                 }
+                if(items.Count() > 0){
+                    items = items.OrderBy(x => x).ToList();
+                } else {
+                    items = current_pages;
+                }
+            } else {
+                items = current_pages;
             }
-            return createPages(favorites);
+            return createPages(items);
         }
+
         public string getDrives()
         {
             DriveInfo[] allDrives = DriveInfo.GetDrives();
