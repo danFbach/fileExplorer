@@ -161,15 +161,27 @@ namespace fileExplorer
                                 }
                                 else if (atFav)
                                 {
-                                    p.write("In Favorite Directory. There is no Directory Above This.", p.accentColor0);
+                                    p.write("In Favorite Directory. Returning Home.", p.accentColor0);
                                     p.rest(1500);
-                                    pages = showFavorites(pages);
-                                    return displayPages(pages, 0, false, 1, true);
+                                    //pages = showFavorites(pages);
+                                    //if(pages.Count() > 0)
+                                    //{
+                                    //    if(pages[0].dataList.Count() > 0)
+                                    //    {
+                                    //        if (pages[0].dataList[0].Split(':')[0] == "Error")
+                                    //        {
+
+                                    //        }
+                                    //    }
+
+                                    //}
+                                    //return displayPages(pages, 0, false, 1, true);
+                                    return null;
                                 }
                                 else
                                 {
                                     p.write(p.br + "Already in a Root Directory. ", p.warningColor);
-                                    p.rest(1000);
+                                    p.rest(1500);
                                     return currentDirectory;
                                 }
                             }
@@ -307,28 +319,33 @@ namespace fileExplorer
             return direc;
         }
 
-        public List<pagedData> showFavorites(List<string> current_pages)
+        public List<pagedData> showFavorites(List<pagedData> current_pages)
         {
+
             List<string> raw_favorites = r.retrieveFavorites();
             List<string> items = new List<string>();
+            List<pagedData> pages = new List<pagedData>();
             if(raw_favorites.Count() > 0){
                 foreach (string f in raw_favorites)
                 {
-                    Directory d = new DirectoryInfo(f);
+                    DirectoryInfo d = new DirectoryInfo(f);
                     if (Directory.Exists(d.FullName) || File.Exists(d.FullName))
                     {
                         items.Add(d.FullName);
                     }
                 }
                 if(items.Count() > 0){
-                    items = items.OrderBy(x => x).ToList();
+                    items.Sort();
+                    pages = createPages(items);
                 } else {
-                    items = current_pages;
+                    items.Add("Error: You have no favorites.");
+                    pages = createPages(items);
                 }
             } else {
-                items = current_pages;
+                items.Add("Error: You have no favorites.");
+                pages = createPages(items);
             }
-            return createPages(items);
+            return pages;
         }
 
         public string getDrives()
